@@ -78,12 +78,12 @@
     display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:4px 3px;gap:1px;position:relative;overflow:hidden}
   .amigo svg{width:46px;height:46px;flex:none}
   .amigo b{font:700 11px/1 "Archivo",sans-serif;color:var(--ink);max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .amigo small{font-size:11px;color:var(--aura);font-weight:700}
+  .amigo small{font-size:11px;color:var(--aura);font-weight:700;display:inline-flex;align-items:center;gap:1px}
   .amigo.elegido{border-color:var(--brass);box-shadow:0 0 0 2px var(--brass) inset}
   .amigo.puesto,.amigo.caro,.amigo.laburando{opacity:.45}
   .amigo .tag{display:block;width:100%;font:700 9px/1.2 "Archivo",sans-serif;color:var(--dim);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   /* la ficha de un amigo: qué tira y cuánto pega, con rayitas para comparar de un vistazo */
-  .stats{display:flex;gap:10px;flex-wrap:wrap;margin:3px 0 1px}
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:3px 0 1px}
   .stat{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--dim);font-weight:700}
   .stat .barra{display:flex;gap:2px}
   .stat .barra i{width:9px;height:6px;border-radius:2px;background:var(--line)}
@@ -98,10 +98,24 @@
   .acciones .vender{margin-left:auto;color:var(--alarm)}
   .ola{background:var(--brass);color:#1A1C22;border-color:transparent;justify-content:center;font:400 16px "Archivo Black","Archivo",sans-serif}
   .ola:disabled{opacity:.45;cursor:default}
-  .ficha{display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 10px}
-  .ficha svg{width:44px;height:52px;flex:none}
+  .ficha{display:flex;flex-direction:column;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 10px 8px}
+  .ficha .cab{display:flex;align-items:center;gap:8px}
+  .ficha .cab svg{width:34px;height:42px;flex:none}
+  .ficha .cab div{flex:1;min-width:0;line-height:1.2}
+  .ficha .cab small{display:block;font-size:11.5px;color:var(--dim);font-weight:700}
   .ficha b{color:var(--ink)} .ficha p{margin:0;font-size:12.5px;color:var(--body)}
-  .ficha .cerrar{margin-left:auto;min-width:44px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink)}
+  .ficha .pod{color:var(--aura);font-weight:700}
+  .ficha .cerrar{flex:none;min-width:44px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink)}
+  /* botones del amigo puesto: el poder arriba a lo ancho; mejorar e irse abajo, mitad y mitad */
+  .botones{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .botones button{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);
+    padding:0 10px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px}
+  .botones button:disabled{opacity:.45;cursor:default}
+  .botones small{color:var(--dim);font-weight:700;display:inline-flex;align-items:center;gap:1px}
+  .botones .poder{grid-column:1 / -1;border-color:var(--aura);color:var(--aura)}
+  .botones .vender{color:var(--alarm)}
+  .rayo{width:.72em;height:.95em;fill:var(--aura);flex:none;vertical-align:-.1em}
+  .dato.aura .rayo{width:11px;height:15px}
   .ayuda{font-size:12px;color:var(--dim);padding:0 2px}
 
   /* fin de partida y portada: ventana flotante */
@@ -134,7 +148,7 @@
   <header>
     <b><span class="largo">La defensa del </span>Quincho</b>
     <span class="dato piezas" id="dPiezas"><i></i><span>10</span></span>
-    <span class="dato aura" id="dAura"><i></i><span>0</span></span>
+    <span class="dato aura" id="dAura" title="Energía (aura)" aria-label="Energía"><svg class="rayo" viewBox="0 0 12 16" aria-hidden="true"><path d="M7.5 0 0 9.2h4.6L3.6 16 12 6.4H7z"/></svg><span>0</span></span>
     <span class="dato ola" id="dOla"><i></i><span>Ola 0/10</span></span>
     <button class="tema" id="tema" type="button" aria-label="Modo claro u oscuro">◐</button>
   </header>
@@ -266,7 +280,7 @@ const MAPAS = {
       "vecina*3 trapito*8 carrito*3","medias*6 perro*6 manguero*4","carrito*5 vecina*4 manguero*8","medias*7 trapito*8 perro*7","lunes*1 medias*4 vecina*3 carrito*3"]),
   },
   playa: {
-    n:"La playa", sub:"Vinieron de vacaciones. Las fisuras también.", ancho:390, alto:560, piezas:10, aura:250, dificultad:1.0, deco:"playa",
+    n:"La playa", sub:"Vinieron de vacaciones. Las fisuras también.", ancho:390, alto:560, piezas:10, aura:250, dificultad:.95, deco:"playa",
     paleta:{pasto:"#B89A5E", camino:"#8C7A4E", camino2:"#A08C5C", vereda2:"#9A824E"},
     paletaClara:{pasto:"#F0DCA8", camino:"#D4BC84", camino2:"#E2CC96", vereda2:"#DDC68E"},
     camino:[[-30,60],[120,60],[120,170],[330,170],[330,280],[60,280],[60,400],[300,400],[300,470],[195,540]],
@@ -276,7 +290,7 @@ const MAPAS = {
       "vecina*4 medias*4 trapito*6","perro*10 carrito*3","medias*7 vecina*4 manguero*8","carrito*6 trapito*10 perro*6","lunes*1 perro*8 medias*5 vecina*3"]),
   },
   montania: {
-    n:"La montaña", sub:"Subieron en micro. Bajan en patas.", ancho:390, alto:560, piezas:10, aura:290, dificultad:1.06, deco:"montania",
+    n:"La montaña", sub:"Subieron en micro. Bajan en patas.", ancho:390, alto:560, piezas:10, aura:290, dificultad:1.15, deco:"montania",
     paleta:{pasto:"#3A4A52", camino:"#5A6470", camino2:"#6A7482", vereda2:"#2A3238"},
     paletaClara:{pasto:"#C9D4DA", camino:"#9AA6B2", camino2:"#AEB9C4", vereda2:"#B4C0C8"},
     camino:[[195,-30],[195,70],[40,120],[350,190],[40,270],[350,350],[60,430],[195,470],[195,540]],
@@ -286,23 +300,23 @@ const MAPAS = {
       "vecina*5 perro*8 carrito*3","medias*8 trapito*10","carrito*6 vecina*5 perro*8","medias*10 perro*10","lunes*1 carrito*5 medias*6 vecina*4"]),
   },
   ciudad: {
-    n:"La ciudad", sub:"Pleno centro. Fisuras de todas las cuadras.", ancho:390, alto:560, piezas:10, aura:360, dificultad:1.04, deco:"ciudad",
+    n:"La ciudad", sub:"Pleno centro. Fisuras de todas las cuadras.", ancho:390, alto:560, piezas:10, aura:360, dificultad:.8, deco:"ciudad",
     paleta:{pasto:"#2A2A30", camino:"#44454E", camino2:"#55565F", vereda2:"#1E1E24"},
     paletaClara:{pasto:"#C8C6C0", camino:"#9A9892", camino2:"#AEACA6", vereda2:"#B8B6B0"},
     camino:[[-30,100],[80,100],[80,30],[200,30],[200,150],[320,150],[320,260],[60,260],[60,380],[330,380],[330,470],[195,470],[195,540]],
     cartel:[52,135],
     puestos:[[30,40],[140,80],[260,90],[360,90],[140,210],[260,210],[30,320],[200,320],[360,320],[140,430],[260,430],[30,470]],
-    olas:olas(["manguero*10 trapito*4","trapito*10 perro*4","medias*8 carrito*3","vecina*6 perro*10","jefe5*1 medias*6 trapito*8",
-      "carrito*6 vecina*6 manguero*8","perro*12 medias*6","carrito*7 trapito*10","medias*8 vecina*4 perro*7","lunes*1 medias*4 carrito*4 vecina*2"]),
+    olas:olas(["manguero*10 trapito*4","trapito*10 perro*4","medias*8 carrito*3","vecina*6 perro*6","jefe5*1 medias*6 trapito*8",
+      "carrito*6 vecina*6 manguero*8","perro*8 medias*6","carrito*7 trapito*10","medias*8 vecina*4 perro*7","lunes*1 medias*4 carrito*4 vecina*2"]),
   },
   esquina: {
-    n:"La esquina del kiosco", sub:"El Rey está desde 1998. Hoy lo acompañan todos.", ancho:390, alto:560, piezas:10, aura:380, dificultad:1.15, deco:"esquina",
+    n:"La esquina del kiosco", sub:"El Rey está desde 1998. Hoy lo acompañan todos.", ancho:390, alto:560, piezas:10, aura:380, dificultad:.62, deco:"esquina",
     paleta:{pasto:"#1E1A2E", camino:"#3A3550", camino2:"#4A4462", vereda2:"#14101E"},
     paletaClara:{pasto:"#D8CFE8", camino:"#A89CC0", camino2:"#BCB0D2", vereda2:"#C4B8DA"},
     camino:[[40,-30],[40,120],[340,120],[340,220],[60,220],[60,330],[330,330],[330,430],[90,430],[90,500],[195,540]],
     puestos:[[110,60],[180,60],[370,92],[200,170],[110,170],[350,280],[200,275],[30,280],[200,380],[360,380],[40,390],[300,468]],
-    olas:olas(["trapito*10 perro*6","medias*8 manguero*10","carrito*6 vecina*6","perro*14 trapito*8","jefe5*1 medias*10 perro*6",
-      "carrito*8 vecina*8 medias*6","jefe5*2 trapito*10","perro*16 medias*8 carrito*6","jefe5*2 vecina*8 medias*10 carrito*6","lunes*2 jefe5*2 medias*8 carrito*8"]),
+    olas:olas(["trapito*10 perro*6","medias*8 manguero*10","carrito*6 vecina*6","perro*8 trapito*8","jefe5*1 medias*10 perro*6",
+      "carrito*8 vecina*8 medias*6","jefe5*2 trapito*10","perro*10 medias*8 carrito*6","jefe5*2 vecina*8 medias*10 carrito*6","lunes*2 jefe5*2 medias*8 carrito*8"]),
   },
 };
 const ORDEN_MAPAS = ["quincho","playa","montania","ciudad","esquina"];
@@ -432,7 +446,9 @@ function avanzar(e, dt){
     const ax=en.x; [en.x,en.y]=puntoEnCamino(e,en.d); if(Math.abs(en.x-ax)>.05) en.dir=en.x>ax?1:-1;
     if(E.molesta){ en.molestaT-=dt; if(en.molestaT<=0){ en.molestaT=E.molesta.cada;
       let mejor=null, md=1e9; for(const t of e.torres){ const dd=dist([t.x,t.y],[en.x,en.y]); if(dd<md){md=dd;mejor=t;} }
-      if(mejor && md<140){ mejor.molesta=E.molesta.dura; aviso(e, E.n+" le ofrece algo a "+CREW[mejor.clave].n); } } }
+      // se para a charlar con el más cercano; al que ya charló lo dejan tranquilo 3 s antes de volver a la carga
+      if(mejor && md<140 && e.t>=(mejor.libre||0)){ mejor.molesta=E.molesta.dura; mejor.libre=e.t+E.molesta.dura+3; en.quieto=Math.max(en.quieto,E.molesta.dura);
+        aviso(e, E.n+" le ofrece algo a "+CREW[mejor.clave].n); } } }
     if(en.d>=e.largo){ en.llego=true; e.piezas-=REGLAS.llegaRoba; aviso(e, E.n+" se llevó una pieza"); }
   }
   // torres
@@ -856,6 +872,8 @@ function progreso(){ try{ return JSON.parse(localStorage.getItem("defensa.progre
 function guardarProgreso(p){ try{ localStorage.setItem("defensa.progreso", JSON.stringify(p)); }catch(_){} }
 function abierto(k){ const i=ORDEN_MAPAS.indexOf(k); return i===0 || !!progreso()[ORDEN_MAPAS[i-1]]; }
 
+// dónde va el cartel de "por acá vienen": donde diga el mapa (`cartel`) o al lado de donde entran
+function cartel(){ const c0=M.camino[0]; return M.cartel || [Math.min(M.ancho-52, Math.max(52, c0[0]<0 ? 56 : c0[0]+70)), Math.min(M.alto-14, Math.max(14, c0[1]<0 ? 14 : c0[1]-26))]; }
 function armarMapa(){
   M = MAPAS[mapaActual];
   const defs = Object.keys(CREW).map(k=>{ const c=CREW[k]; return grad(k+"-piel", c.skin||PIEL)+grad(k+"-remera", c.shirt)+grad(k+"-pelo", c.hair); }).join("")
@@ -864,7 +882,7 @@ function armarMapa(){
   const puestos = M.puestos.map((p,i)=>`<g class="puesto libre" data-i="${i}" transform="translate(${p[0]},${p[1]})"><circle class="marca" r="22"/><ellipse cy="2" rx="18" ry="5" fill="#000" opacity=".2"/></g>`).join("");
   const pal = M.paleta, palC = M.paletaClara||pal;
   // el cartel de "por acá vienen": al lado de donde entran, salvo que el mapa diga dónde (`cartel`)
-  const c0 = M.camino[0], cartel = M.cartel || [Math.min(M.ancho-52, Math.max(52, c0[0]<0 ? 56 : c0[0]+70)), Math.min(M.alto-14, Math.max(14, c0[1]<0 ? 14 : c0[1]-26))];
+  const [cx,cy] = cartel();
   $("mapa").innerHTML = `<svg viewBox="0 0 ${M.ancho} ${M.alto}" id="svg" role="img" aria-label="${esc(M.n)}">
     <style>#svg{--pasto:${pal.pasto};--camino:${pal.camino};--camino2:${pal.camino2};--vereda2:${pal.vereda2}}
       @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]) #svg{--pasto:${palC.pasto};--camino:${palC.camino};--camino2:${palC.camino2};--vereda2:${palC.vereda2}} }
@@ -881,7 +899,7 @@ function armarMapa(){
     <path d="${camino}" stroke="var(--camino)" stroke-width="32" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
     <path d="${camino}" stroke="url(#baldosa)" stroke-width="32" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
     <path d="${camino}" stroke="var(--vereda2)" stroke-width="2" fill="none" stroke-dasharray="6 10" stroke-linejoin="round" stroke-linecap="round" opacity=".7"/>
-    <g class="cartel" transform="translate(${cartel[0]},${cartel[1]})"><rect x="-48" y="-11" width="96" height="20" rx="5" fill="var(--panel)" stroke="var(--line)"/><text y="3.5" text-anchor="middle" font-family="Archivo" font-weight="700" font-size="10" fill="var(--ink)">POR ACÁ VIENEN</text></g>
+    <g class="cartel" transform="translate(${cx},${cy})"><rect x="-48" y="-11" width="96" height="20" rx="5" fill="var(--panel)" stroke="var(--line)"/><text y="3.5" text-anchor="middle" font-family="Archivo" font-weight="700" font-size="10" fill="var(--ink)">POR ACÁ VIENEN</text></g>
     <g class="quincho" transform="translate(195,520)"><rect x="-70" y="-10" width="140" height="40" rx="6" fill="#6B4A2F" stroke="#3A2616" stroke-width="2"/><path d="M-78,-10 L0,-40 L78,-10 Z" fill="#8A2F26" stroke="#3A2616" stroke-width="2"/><rect x="-62" y="-4" width="20" height="30" fill="#3A2616"/><text x="10" y="25" text-anchor="middle" font-family="Archivo Black" font-size="10" fill="#F2F1ED" letter-spacing=".5">EL QUINCHO</text><g id="vitrina"></g>
       <g class="humo" opacity=".5"><path d="M50,-40 q6,-10 0,-18 q-6,-8 2,-16" stroke="#CCC" stroke-width="3" fill="none" stroke-linecap="round"/></g></g>
     <g id="puestos">${puestos}</g>
@@ -964,6 +982,9 @@ function pintar(){
   const rec=E.avisos.filter(a=>E.t-a.t<3.2).slice(-3);
   $("avisos").innerHTML = rec.map((a,i)=>`<text class="aviso" x="${M.ancho/2}" y="${M.alto-96-i*16}" text-anchor="middle" opacity="${Math.min(1,(3.2-(E.t-a.t))/.8)}">${esc(a.txt)}</text>`).join("");
   $("vitrina").innerHTML = Array.from({length:M.piezas},(_,i)=>`<rect x="${-36+i*9.5}" y="-4" width="7" height="11" rx="1.5" fill="${i<E.piezas?'var(--brass)':'#0006'}"/>`).join("");
+  // el cartel de "por acá vienen" se va cuando ya arrancó la primera ola o cuando alguien se para encima
+  const cart=document.querySelector("#svg .cartel");
+  if(cart){ const [cx,cy]=cartel(); cart.style.display = E.ola>0 || E.torres.some(t=>Math.abs(t.x-cx)<70 && t.y-cy<80 && t.y>cy) ? "none" : ""; }
   $("dPiezas").lastElementChild.textContent = E.piezas;
   $("dAura").lastElementChild.textContent = Math.floor(E.aura);
   $("dOla").lastElementChild.textContent = "Ola "+E.ola+"/"+M.olas.length;
@@ -971,6 +992,7 @@ function pintar(){
 const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* Ficha de números de un amigo, en rayitas del 1 al 5 (con el número al lado) para comparar sin leer. */
+const RAYO = `<svg class="rayo" viewBox="0 0 12 16" aria-hidden="true"><path d="M7.5 0 0 9.2h4.6L3.6 16 12 6.4H7z"/></svg>`;
 const A_QUIEN = { lejos:"a uno", area:"a varios", cerca:"a la fila", apoyo:"a uno, y ayuda" };
 function rayas(n){ n=Math.max(0,Math.min(5,Math.round(n))); return `<span class="barra">${[1,2,3,4,5].map(i=>`<i class="${i<=n?"si":""}"></i>`).join("")}</span>`; }
 function fichaStats(k, nivel=1){
@@ -984,32 +1006,37 @@ function fichaStats(k, nivel=1){
     + st("Alcance", (r-60)/20, Math.round(r))
     + `<span class="stat">Le pega<em>${quien}</em></span></div>`;
 }
+let panelHecho = "";
 function pintarPanel(){
   const t = torreElegida!=null ? E.torres.find(x=>x.id===torreElegida) : null;
   if(!t) torreElegida=null;
   let html;
   if(t){ const T=TORRES[t.clave], c=CREW[t.clave], cm=costoMejora(t);
-    html = `<div class="ficha"><svg viewBox="-70 -210 140 220"><g>${svgTorre(t.clave)}</g></svg>
-      <div><b>${c.n}</b> · ${T.rol} · nivel ${t.nivel}<p>${esc(T.tira)}</p>${fichaStats(t.clave,t.nivel)}<p><span style="color:var(--aura);font-weight:700">${T.poder.n}:</span> ${esc(T.poder.pie).replace(/ s$/,"&nbsp;s")}</p></div>
-      <button class="cerrar" type="button" data-acc="cerrar" aria-label="Cerrar">✕</button></div>
-      <div class="acciones">
-        <button class="poder" type="button" data-acc="poder" ${E.aura<T.poder.cuesta?"disabled":""}>${T.poder.n} <small>${T.poder.cuesta}</small></button>
-        <button type="button" data-acc="mejorar" ${t.nivel>=MEJORA.niveles||E.aura<cm?"disabled":""}>${t.nivel>=MEJORA.niveles?"Al tope":"Mejorar"} <small>${t.nivel>=MEJORA.niveles?"":cm}</small></button>
-        <button class="vender" type="button" data-acc="vender">Se va <small>+${Math.round(T.costo*.6)}</small></button>
+    html = `<div class="ficha">
+      <div class="cab"><svg viewBox="-70 -210 140 220"><g>${svgTorre(t.clave)}</g></svg><div><b>${c.n}</b> · ${T.rol}<small>nivel ${t.nivel} de ${MEJORA.niveles}</small></div>
+        <button class="cerrar" type="button" data-acc="cerrar" aria-label="Cerrar">✕</button></div>
+      <p>${esc(T.tira)}</p>${fichaStats(t.clave,t.nivel)}<p><span class="pod">${T.poder.n}:</span> ${esc(T.poder.pie).replace(/ s$/,"&nbsp;s")}</p></div>
+      <div class="botones">
+        <button class="poder" type="button" data-acc="poder" ${E.aura<T.poder.cuesta?"disabled":""}>${T.poder.n} <small>${RAYO}${T.poder.cuesta}</small></button>
+        <button type="button" data-acc="mejorar" ${t.nivel>=MEJORA.niveles||E.aura<cm?"disabled":""}>${t.nivel>=MEJORA.niveles?"Al tope":"Mejorar"} <small>${t.nivel>=MEJORA.niveles?"":RAYO+cm}</small></button>
+        <button class="vender" type="button" data-acc="vender">Se va <small>+${RAYO}${Math.round(T.costo*.6)}</small></button>
       </div>` + (E.mudando===t.id?`<div class="ayuda">Tocá el lugar adonde se muda.</div>`:"");
   } else {
     html = `<div class="fila">` + Object.keys(CREW).map(k=>{ const T=TORRES[k], c=CREW[k];
       const puesto=E.torres.some(x=>x.clave===k), caro=E.aura<T.costo, lab=T.desde && E.ola+1<T.desde;
       return `<button class="amigo ${eligiendo===k?"elegido":""} ${puesto?"puesto":""} ${caro&&!puesto?"caro":""} ${lab?"laburando":""}" type="button" data-k="${k}">
         <span class="tag">${puesto?"en la vereda":lab?"laburando":T.rol}</span>
-        <svg viewBox="-70 -215 140 225"><g>${svgTorre(k)}</g></svg><b>${c.n}</b><small>${T.costo}</small></button>`; }).join("") + `</div>`
+        <svg viewBox="-70 -215 140 225"><g>${svgTorre(k)}</g></svg><b>${c.n}</b><small>${RAYO}${T.costo}</small></button>`; }).join("") + `</div>`
       + (eligiendo ? (()=>{ const T=TORRES[eligiendo], c=CREW[eligiendo], lab=T.desde && E.ola+1<T.desde;
-          return `<div class="ficha"><div><b>${c.n}</b> · ${T.rol}<p>${esc(T.tira)}</p>${fichaStats(eligiendo)}<p><span style="color:var(--aura);font-weight:700">${T.poder.n}:</span> ${esc(T.poder.pie).replace(/ s$/,"&nbsp;s")}</p>
-            <p class="hace">${lab?"Llega del laburo en la ola "+T.desde+".":E.aura<T.costo?"Te faltan "+Math.ceil(T.costo-E.aura)+" de aura.":"Tocá un lugar libre de la vereda."}</p></div>
-            <button class="cerrar" type="button" data-acc="soltar" aria-label="Cancelar">✕</button></div>`; })() : "")
+          return `<div class="ficha"><div class="cab"><div><b>${c.n}</b> · ${T.rol}<small>cuesta ${RAYO}${T.costo}</small></div>
+            <button class="cerrar" type="button" data-acc="soltar" aria-label="Cancelar">✕</button></div>
+            <p>${esc(T.tira)}</p>${fichaStats(eligiendo)}<p><span class="pod">${T.poder.n}:</span> ${esc(T.poder.pie).replace(/ s$/,"&nbsp;s")}</p>
+            <p class="hace">${lab?"Llega del laburo en la ola "+T.desde+".":E.aura<T.costo?"Te falta energía: "+RAYO+Math.ceil(T.costo-E.aura)+".":"Tocá un lugar libre de la vereda."}</p></div>`; })() : "")
       + `<div class="acciones"><button class="ola" type="button" data-acc="ola" ${E.enOla||E.fin?"disabled":""}>${E.ola===0?"Que vengan":E.enOla?"Vienen…":"Que venga la ola "+(E.ola+1)}</button><button type="button" data-acc="mapas" class="salir">Mapas</button></div>`
       + (eligiendo ? "" : `<div class="ayuda">Tocá a un amigo para ver qué hace, y después un lugar de la vereda.</div>`);
   }
+  if(html===panelHecho) return;   // si no cambió nada, no se toca: rearmarlo a mitad de un toque hace que el toque se pierda
+  panelHecho = html;
   for(const id of ["panelAbajo","panelLado"]) $(id).innerHTML = html;
 }
 document.addEventListener("click", ev=>{
