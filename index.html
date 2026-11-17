@@ -157,6 +157,75 @@
   .mapaBtn.ganado{border-color:var(--patina)}
   .salir{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:0 14px;font-weight:700}
 
+  /* =====================================================================
+     PIEL DE LA PORTADA: atardecer en el barrio. Colores del cielo de la portada,
+     contorno grueso y sombra dura como el dibujo. Pisa lo de arriba; el tablero no se toca.
+     ===================================================================== */
+  :root{
+    --bg:#1C0F24; --panel:#2B1836; --panel2:#352042; --sunk:#160A1C; --line:#4A2E55; --hair:#4F3560;
+    --ink:#FFF4E4; --body:#EBDACB; --dim:#B99FB4;
+    --brass:#FFC24A; --alarm:#FF7558; --patina:#7FD6B0; --aura:#B994FF;
+    --borde:#0C0510; --sombraTitulo:#8A2F26; --boton:#FFD56B; --botonTinta:#1A0A24;
+    --cielo:linear-gradient(180deg,#4A1E52 0%,#2A1434 30%,#1C0F24 60%);
+  }
+  @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+    --bg:#FCEBD8; --panel:#FFF9F0; --panel2:#FDEFDD; --sunk:#F5DCC2; --line:#E2C3A8; --hair:#E8CDB4;
+    --ink:#2A1220; --body:#4A2C34; --dim:#8E6870;
+    --brass:#D9821C; --alarm:#C9402E; --patina:#2E8C6A; --aura:#6A3FD0;
+    --borde:#2A1220; --sombraTitulo:#F2A65A; --boton:#FFD56B; --botonTinta:#1A0A24;
+    --cielo:linear-gradient(180deg,#F6B07E 0%,#F9CFA6 22%,#FCEBD8 50%); } }
+  :root[data-theme="light"]{
+    --bg:#FCEBD8; --panel:#FFF9F0; --panel2:#FDEFDD; --sunk:#F5DCC2; --line:#E2C3A8; --hair:#E8CDB4;
+    --ink:#2A1220; --body:#4A2C34; --dim:#8E6870;
+    --brass:#D9821C; --alarm:#C9402E; --patina:#2E8C6A; --aura:#6A3FD0;
+    --borde:#2A1220; --sombraTitulo:#F2A65A; --boton:#FFD56B; --botonTinta:#1A0A24;
+    --cielo:linear-gradient(180deg,#F6B07E 0%,#F9CFA6 22%,#FCEBD8 50%); }
+  html,body{background:var(--bg) var(--cielo) no-repeat}
+  /* arriba */
+  header b{font-size:15px;color:var(--ink);text-shadow:0 2px 0 var(--sombraTitulo);flex:none}
+  @media (min-width:600px){ header b{font-size:17px} }
+  .dato,header .tema{border:2px solid var(--borde);border-radius:12px;background:var(--panel);box-shadow:0 3px 0 var(--borde)}
+  .dato.ola{background:var(--boton);color:var(--botonTinta)}
+  .dato.piezas i{background:var(--brass);border-radius:2px 2px 4px 4px;width:10px;height:12px}
+  /* el tablero: marco de historieta (adentro no se toca nada) */
+  #mapa svg{filter:drop-shadow(0 5px 0 var(--borde))}
+  /* tarjetas de los amigos */
+  .fila{padding:2px 2px 7px}
+  .amigo{border:2px solid var(--borde);border-radius:14px;background:var(--panel);box-shadow:0 3px 0 var(--borde);transition:transform .12s}
+  .amigo.elegido{background:var(--boton);border-color:var(--borde);box-shadow:0 3px 0 var(--borde);transform:translateY(-2px)}
+  .amigo.elegido b,.amigo.elegido .tag{color:var(--botonTinta)}
+  .amigo.elegido small{color:#5A2FB0}
+  .amigo.elegido .rayo{fill:#5A2FB0}
+  .amigo .tag{color:var(--dim)}
+  /* ficha */
+  .ficha{border:2px solid var(--borde);border-radius:14px;background:var(--panel);box-shadow:0 4px 0 var(--borde)}
+  .ficha .cab b{font-family:"Archivo Black","Archivo",sans-serif;font-weight:400}
+  .stat .barra i{background:var(--hair)}
+  .stat .barra i.si{background:var(--brass)}
+  /* botones: contorno, sombra dura y se hunden al tocarlos */
+  .acciones button,.botones button,.salir,.ficha .cerrar,.mapaBtn{border:2px solid var(--borde);box-shadow:0 3px 0 var(--borde);background:var(--panel);color:var(--ink)}
+  .acciones button:active,.botones button:active,.salir:active,.ficha .cerrar:active,.mapaBtn:active,.amigo:active,.dato:active,header .tema:active{transform:translateY(2px);box-shadow:0 1px 0 var(--borde)}
+  .ola,.caja .ola,.acciones .ola{background:var(--boton);color:var(--botonTinta);border:2px solid var(--borde);box-shadow:0 4px 0 var(--borde);font-size:17px}
+  .acciones .ola:disabled{opacity:.6}
+  .ola:active{transform:translateY(3px);box-shadow:0 1px 0 var(--borde)}
+  .ola:disabled{opacity:.6}
+  .botones .poder{background:var(--aura);color:#FFF;border-color:var(--borde)}
+  .botones .poder small,.botones .poder .rayo{color:#FFFD;fill:#FFF}
+  .botones .vender{color:var(--alarm)}
+  .botones button:disabled,.botones .poder:disabled{opacity:.5;box-shadow:0 2px 0 var(--borde)}
+  /* ventana de mapas y fin de partida: la portada desenfocada atrás */
+  #tapa{background:#0C0510}
+  #tapa::before{content:"";position:absolute;inset:-30px;background:var(--img-portada) center/cover;filter:blur(14px) brightness(.5)}
+  .caja{position:relative;border:3px solid var(--borde);border-radius:18px;background:var(--panel);box-shadow:0 8px 0 var(--borde),0 24px 50px #000A}
+  .caja h1{font-size:28px;text-shadow:0 3px 0 var(--sombraTitulo)}
+  .caja .bajada{color:var(--brass)}
+  .mapaBtn{border-radius:14px;background:var(--panel2);padding:9px 12px}
+  .mapaBtn b{font-family:"Archivo Black","Archivo",sans-serif;font-weight:400}
+  .mapaBtn.cerrado{border-style:dashed;box-shadow:none;opacity:.55}
+  .mapaBtn.ganado{border-color:var(--borde);background:linear-gradient(90deg,color-mix(in srgb,var(--patina) 22%,var(--panel2)),var(--panel2))}
+  .mapaBtn i{background:var(--patina);color:#0C0510;border-radius:6px;padding:1px 7px;margin-top:2px}
+  .mapas{padding:2px 2px 6px}
+
   @media (min-width:900px) and (orientation:landscape){
     main{flex-direction:row}
     #panelLado{display:flex;width:340px;flex:none;justify-content:flex-start}
