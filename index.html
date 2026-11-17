@@ -269,13 +269,13 @@
 const CREW = {
   tomy  :{n:"Tomy",      hair:"#C2571F", style:"rulos",      beard:false, tall:1.00, shirt:"#4E8FD0"},
   lamber:{n:"Lamber",    hair:"#1E1A18", style:"corto",      beard:true,  tall:1.00, shirt:"#57A06B"},
-  chupa :{n:"Chupa",     hair:"#1E1A18", style:"corto",      beard:false, tall:1.00, shirt:"#C9603F"},
+  chupa :{n:"Chupa",     hair:"#1E1A18", style:"corto",      beard:true,  tall:1.00, shirt:"#C9603F"},
   kzk   :{n:"Kzk",       hair:"#A9793F", style:"corto",      beard:true,  tall:1.00, shirt:"#8A6BC4"},
-  matxi :{n:"Matxi",     hair:"#6B4526", style:"corto",      beard:false, tall:1.00, shirt:"#D8A33C"},
-  chuna :{n:"Chuna",     hair:"#3A2416", style:"largorulos", beard:false, tall:1.00, shirt:"#3FA6A0"},
+  matxi :{n:"Matxi",     hair:"#2A1D14", style:"medio",      beard:false, tall:1.00, shirt:"#D8A33C"},
+  chuna :{n:"Chuna",     hair:"#2A1A12", style:"rulos",      beard:true,  tall:1.00, shirt:"#3FA6A0"},
   hippie:{n:"El Hippie", hair:"#1E1A18", style:"corto",      beard:false, tall:1.18, shirt:"#22242A"},
-  marian:{n:"Marian",    hair:"#7A5230", style:"largo",      beard:false, tall:1.10, shirt:"#5B7FD4"},
-  damian:{n:"Damián",    hair:"#1E1A18", style:"medio",      beard:false, tall:1.00, shirt:"#7FA23E"},
+  marian:{n:"Marian",    hair:"#6B4526", style:"rulos",      beard:false, tall:1.10, shirt:"#5B7FD4"},
+  damian:{n:"Damián",    hair:"#1E1A18", style:"largo",      beard:false, tall:1.00, shirt:"#7FA23E"},
   negro :{n:"El Negro",  hair:"#2A1D14", style:"corto",      beard:true,  tall:1.00, shirt:"#6B4A2F", skin:"#8A5A38"},
 };
 
@@ -300,14 +300,13 @@ const TORRES = {
            frase:["Museoss, buen diaa","keee??","ta bie?"],
            poder:{n:"Caja de mudanza", cuesta:70, pie:"los de cerca se frenan 3 s y les duele",
                   hace:(e,t)=>{ for(const en of enRango(e,t)){ aplicar(en,{quieto:3}); herir(e,en,20); } } } },
-  kzk:   { rol:"El técnico", tipo:"apoyo", costo:90, rango:95, cadencia:1.0, danio:10, proyectil:"tornillo",
-           vecinos:{rango:80, danio:1.25},
-           tira:"Tornillos. Los amigos de al lado pegan un 25% más.",
+  kzk:   { rol:"Buena onda", tipo:"area", costo:75, rango:85, cadencia:0, danio:0, nube:{lento:.6},
+           tira:"Sahumerio y buena energía. Los que entran en el humo van más lento.",
            frase:["jajaja mis diseños dice el chanta","amigo, esto se mejora"],
-           poder:{n:"Monopatinazo", cuesta:40, pie:"se muda a otro lugar gratis",
-                  hace:(e,t)=>{ e.mudando=t.id; } } },
-  matxi: { rol:"El cartero", tipo:"lejos", costo:100, rango:120, cadencia:2.2, danio:38, proyectil:"sobre",
-           tira:"Sobres. El cartero no llama dos veces: un golpe fuerte y seguro.",
+           poder:{n:"Buena onda", cuesta:55, pie:"a los del humo se les borra el escudo",
+                  hace:(e,t)=>{ for(const en of enRango(e,t)){ en.escudo=0; herir(e,en,10); } } } },
+  matxi: { rol:"El cartero", tipo:"lejos", costo:100, rango:120, cadencia:2.2, danio:38, proyectil:["libro","sobre"],
+           tira:"Libros y cartas. El cartero no llama dos veces: un golpe fuerte y seguro.",
            frase:["Quizás, sea... es un montón","flah, amigo"],
            poder:{n:"Seducción", cuesta:65, pie:"los que lo miran se dan vuelta 2 s",
                   hace:(e,t)=>{ for(const en of enRango(e,t)) aplicar(en,{reversa:2}); } } },
@@ -317,11 +316,12 @@ const TORRES = {
            frase:["Holis bellos míos, soy yoooo","me están manijeando en el trabajo"],
            poder:{n:"Piernas", cuesta:80, pie:"corre todo el camino pateando a todos",
                   hace:(e,t)=>{ for(const en of e.enemigos) if(!en.muerto) herir(e,en,22); } } },
-  hippie:{ rol:"Buena onda", tipo:"area", costo:75, rango:85, cadencia:0, danio:0, nube:{lento:.6},
-           tira:"Humo de sahumerio. Los que lo respiran van más lento.",
+  hippie:{ rol:"El motoquero", tipo:"apoyo", costo:90, rango:95, cadencia:1.0, danio:10, proyectil:"tornillo",
+           vecinos:{rango:80, danio:1.25},
+           tira:"Tuercas y tornillos de la moto. Los amigos de al lado pegan un 25% más.",
            frase:["flama","tranqui, está flama"],
-           poder:{n:"Buena onda", cuesta:55, pie:"a los de la nube se les borra el escudo",
-                  hace:(e,t)=>{ for(const en of enRango(e,t)){ en.escudo=0; herir(e,en,10); } } } },
+           poder:{n:"Motazo", cuesta:40, pie:"se sube a la moto y se muda a otro lugar gratis",
+                  hace:(e,t)=>{ e.mudando=t.id; } } },
   marian:{ rol:"Ojo de halcón", tipo:"lejos", costo:110, rango:160, cadencia:1.8, danio:30, proyectil:"reel",
            rebota:.5,
            tira:"Reels. Lejos, fuerte, y el reel rebota a otro.",
@@ -344,7 +344,7 @@ const MEJORA = { niveles:3, danio:1.45, rango:1.08, costo:.6 };   // costo de me
 
 /* Los fisuras del barrio. Vienen por la vereda a llevarse las piezas. vel en px/s. */
 const ENEMIGOS = {
-  manguero:   { n:"El Manguero",     vida:60,  vel:38,  aura:8,  shirt:"#4A5A7A", look:"manguero",
+  manguero:   { n:"El Manguero",     vida:60,  vel:38,  aura:8,  shirt:"#1B3A8C", look:"manguero",
                 d:"«¿No tenés una moneda?» Camina y pide." },
   trapito:    { n:"El Trapito",      vida:55,  vel:66,  aura:10, shirt:"#D8A33C", look:"trapito",
                 d:"Apurado, con el trapo al hombro. Te cuida el auto aunque no tengas." },
@@ -352,7 +352,7 @@ const ENEMIGOS = {
                 d:"Lento, con el carrito cargado hasta arriba. Aguanta todo." },
   perro:      { n:"El Perro de la Esquina", vida:48, vel:105, aura:12, shirt:"#B07A3E", look:"perro", inmune:["lento"],
                 d:"Corre a todo lo que se mueve. El humo no lo frena." },
-  medias:     { n:"El de las Medias", vida:110, vel:34,  aura:18, shirt:"#5A4A3A", look:"medias", escudo:45,
+  medias:     { n:"El de las Medias", vida:110, vel:34,  aura:18, shirt:"#1B3A8C", look:"medias", escudo:45,
                 d:"«Tres pares por mil.» Las medias lo protegen." },
   vecina:     { n:"La Vecina Chusma", vida:75,  vel:44,  aura:16, shirt:"#C4506B", look:"vecina", molesta:{cada:4, dura:2},
                 d:"Se para a charlar y un amigo deja de tirar 2 s." },
@@ -426,7 +426,7 @@ const REGLAS = { bonoOla:35, bonoApuro:25, separacion:1.0, llegaRoba:1, escalaVi
    el arnés las corre en node. Todo el azar pasa por AZAR.
    ===================================================================== */
 let AZAR = Math.random;
-const ARCO = { mate:30, chori:34, sobre:22, claqueta:26, tornillo:18, masaje:14, notif:0, reel:0, audio:0 };
+const ARCO = { mate:30, chori:34, sobre:22, libro:24, claqueta:26, tornillo:18, masaje:14, notif:0, reel:0, audio:0 };
 const dist = (a,b) => Math.hypot(a[0]-b[0], a[1]-b[1]);
 
 function crearPartida(mapaKey){
@@ -555,13 +555,14 @@ function avanzar(e, dt){
     if(t.molesta>0){ t.molesta-=dt; continue; }
     if(t.rafaga>0) t.rafaga-=dt;
     if(!T.proyectil) continue;
+    const tipoTiro = Array.isArray(T.proyectil) ? T.proyectil[t.tiros % T.proyectil.length] : T.proyectil;
     t.enfriando-=dt; if(t.enfriando>0) continue;
     const cand=enRango(e,t); if(!cand.length) continue;
     const obj=cand.reduce((a,b)=>a.d>b.d?a:b);   // el que va más adelante
     t.enfriando = T.cadencia/(t.rafaga>0?2:1);
     const danio=danioDe(e,t); if(t.triple>0) t.triple--;
     t.tiros++;
-    e.tiros.push({ id:e.ids++, de:t.id, tipo:T.proyectil, x:t.x, y:t.y-30, x0:t.x, y0:t.y-30, a:obj.id, danio, vel:260, p:0, arco:ARCO[T.proyectil]||0 });
+    e.tiros.push({ id:e.ids++, de:t.id, tipo:tipoTiro, x:t.x, y:t.y-30, x0:t.x, y0:t.y-30, a:obj.id, danio, vel:260, p:0, arco:ARCO[tipoTiro]||0 });
     if(T.linea){ // el audio le pega a todos los que están cerca de la línea torre→objetivo
       const ax=t.x, ay=t.y, bx=obj.x, by=obj.y, L2=(bx-ax)**2+(by-ay)**2;
       for(const en of e.enemigos){ if(en.muerto||en===obj) continue;
@@ -594,7 +595,7 @@ function impacto(e, s, obj){
   e.efectos.push({x:obj.x, y:obj.y-14, tipo:T.salpica?"salpica":"golpe", r:T.salpica||18, t:e.t, n:Math.round(s.danio)});
   for(const en of victimas){ herir(e,en,s.danio); if(T.efecto) aplicar(en,T.efecto); }
   if(T.rebota && !s.rebote){ const otro=e.enemigos.filter(en=>!en.muerto&&en!==obj&&dist([en.x,en.y],[obj.x,obj.y])<=90)[0];
-    if(otro) e.nuevos.push({ id:e.ids++, de:s.de, tipo:T.proyectil, x:obj.x, y:obj.y-14, x0:obj.x, y0:obj.y-14, a:otro.id, danio:s.danio*T.rebota, vel:260, p:0, arco:0, rebote:true }); }
+    if(otro) e.nuevos.push({ id:e.ids++, de:s.de, tipo:s.tipo, x:obj.x, y:obj.y-14, x0:obj.x, y0:obj.y-14, a:otro.id, danio:s.danio*T.rebota, vel:260, p:0, arco:0, rebote:true }); }
 }
 
 /* lo que mira el arnés */
@@ -711,7 +712,8 @@ function torso(k, c, g){
     <path d="M-30,0 C-32,20 -30,40 -26,58 L26,58 C30,40 32,20 30,0 C20,-6 -20,-6 -30,0 Z" fill="url(#${k}-remera)" stroke="${e}" stroke-width="1.8"/>
     <path d="M-12,-3 q12,10 24,0" fill="${osc(s,.3)}" stroke="${e}" stroke-width="1.2"/>
     <path d="M-24,14 q-2,20 2,38" stroke="${osc(s,.18)}" stroke-width="2" fill="none" opacity=".7"/>
-    <text x="0" y="36" text-anchor="middle" font-family="Archivo Black,Archivo,sans-serif" font-size="11" fill="${ink}" opacity=".92">${tag}</text>
+    ${c.franja ? `<path d="M-31,14 H31 L31.5,26 H-31.5 Z" fill="${c.franja}" stroke="${osc(c.franja,.4)}" stroke-width="1"/>` : ""}
+    <text x="0" y="${c.franja?42:36}" text-anchor="middle" font-family="Archivo Black,Archivo,sans-serif" font-size="11" fill="${ink}" opacity=".92">${tag}</text>
     <rect x="-26" y="54" width="52" height="7" rx="2" fill="${osc(PANT,.2)}"/>
   </g>`;
 }
@@ -787,18 +789,16 @@ const GENTE = {
       <g transform="translate(110,-150) rotate(-30)"><circle r="4" fill="none" stroke="#C9C9C9" stroke-width="2.4"/><path d="M4,0 h16 v4 h-3 v-2 h-3 v2 h-3 v-2 h-7 z" fill="#C9C9C9"/></g>
       <g transform="translate(68,-196)"><rect x="-6" y="-4" width="12" height="8" rx="2" fill="#2A8FBD"/><text y="2" text-anchor="middle" font-size="5" font-family="Archivo" font-weight="700" fill="#FFF">SUBE</text></g>
       <path d="M76,-150 q20,-30 40,-30" stroke="#F2F1ED" stroke-width="1.4" fill="none" stroke-dasharray="3 4" opacity=".5"/></g>` },
-  kzk: { expr:"concentrado",
-    pose:{ piernas:[ [[-11,-72],[-16,-40],[-20,-8],-1], [[11,-72],[14,-40],[12,-8],1] ],
-           brazos:[ [[-27,-124],[-50,-110],[-56,-86]], [[27,-124],[54,-120],[68,-146]] ] },
-    atras:`<g transform="translate(-4,0)">
-      <path d="M-56,-86 l-4,80" stroke="#2B3140" stroke-width="5" stroke-linecap="round"/><path d="M-70,-86 h28" stroke="#2B3140" stroke-width="6" stroke-linecap="round"/><rect x="-72" y="-90" width="8" height="8" rx="2" fill="#E86B5E"/>
-      <rect x="-62" y="-8" width="92" height="7" rx="3" fill="#2B3140"/><circle cx="-58" cy="0" r="6.5" fill="#1A1C22" stroke="#666" stroke-width="2"/><circle cx="28" cy="0" r="6.5" fill="#1A1C22" stroke="#666" stroke-width="2"/>
-      <path d="M-56,-30 h-10 v-6 h6" fill="none" stroke="#9BD3B0" stroke-width="2" opacity=".6"/></g>`,
-    adelante:`<g>
-      <g transform="translate(70,-150) rotate(-35)"><rect x="-5" y="-30" width="10" height="26" rx="4" fill="#E86B5E" stroke="#8A2F26" stroke-width="1.4"/><rect x="-1.6" y="-4" width="3.2" height="26" fill="#D9D9D9" stroke="#777"/><path d="M-4,22 h8" stroke="#777" stroke-width="2"/></g>
-      <g fill="#B9B9B9" stroke="#555" stroke-width="1"><path d="M96,-176 l5,0 l-2.5,12 z"/><path d="M108,-160 l5,0 l-2.5,12 z"/><path d="M90,-150 l5,0 l-2.5,12 z"/></g>
-      <g transform="translate(-14,-72)"><rect x="-22" y="0" width="44" height="7" rx="2" fill="#6B4A2F"/><rect x="-10" y="-5" width="8" height="12" rx="1" fill="#8A6B31"/><rect x="4" y="-5" width="8" height="12" rx="1" fill="#8A6B31"/></g></g>` },
-  matxi: { expr:"serio", anteojos:"#1A1C22",
+  kzk: { expr:"paz",
+    pose:{ piernas:[ [[-10,-50],[-44,-32],[-6,-10],1], [[10,-50],[44,-32],[6,-10],-1] ],
+           brazos:[ [[-27,-100],[-48,-76],[-30,-52]], [[27,-100],[48,-76],[40,-56]] ], torso:{x:0,y:-106} },
+    hy:-136,
+    atras:`<g><circle cx="0" cy="-110" r="88" fill="#A98CF0" opacity=".10"/><circle cx="0" cy="-110" r="66" fill="#A98CF0" opacity=".10"/></g>`,
+    adelante:`<g><path d="M40,-56 l6,-40" stroke="#5A3A1E" stroke-width="3" stroke-linecap="round"/><circle cx="46" cy="-97" r="3" fill="#E86B5E"/>
+      <g fill="none" stroke="#A98CF0" stroke-width="3" stroke-linecap="round" opacity=".75"><path d="M46,-102 c10,-14 -12,-22 -2,-38 c8,-12 -6,-20 2,-32"/><path d="M58,-110 c8,-10 -6,-16 2,-28" opacity=".6"/><path d="M34,-114 c-8,-10 6,-16 -2,-28" opacity=".6"/></g>
+      <ellipse cx="0" cy="-4" rx="60" ry="9" fill="#C97A4A" opacity=".5"/>
+      <g transform="translate(-64,-40)"><ellipse cx="0" cy="8" rx="16" ry="5" fill="#000" opacity=".15"/><ellipse cx="0" cy="-2" rx="14" ry="9" fill="#F2F1ED" stroke="#8B909C" stroke-width="1.4"/><circle cx="10" cy="-10" r="7" fill="#F2F1ED" stroke="#8B909C" stroke-width="1.4"/><path d="M6,-16 l-3,-5 l5,2 z M13,-16 l3,-5 l-5,2 z" fill="#C9A46B"/><circle cx="12" cy="-10" r="1.3" fill="#1A1C22"/><path d="M-14,-2 q-8,-6 -6,-12" stroke="#F2F1ED" stroke-width="3" fill="none" stroke-linecap="round"/></g></g>` },
+  matxi: { expr:"serio",
     pose:{ piernas:[ [[-14,-72],[-20,-38],[-24,-6],-1], [[14,-72],[20,-38],[24,-6],1] ],
            brazos:[ [[-27,-124],[-44,-100],[18,-96]], [[27,-124],[44,-100],[-18,-100]] ], brazoIzqAtras:true },
     atras:`<g><rect x="-80" y="-236" width="160" height="34" rx="4" fill="#B9B9B9" stroke="#666" stroke-width="2"/><text x="0" y="-212" text-anchor="middle" font-family="Archivo Black" font-size="18" fill="#1A1C22">NO PASA</text>
@@ -812,15 +812,13 @@ const GENTE = {
     adelante:`<g stroke="#3FA6A0" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M-70,-40 h22 M-78,-28 h30 M-70,-16 h22"/></g>
       <g transform="translate(96,-118) rotate(-25)"><path d="M-14,-9 h20 q12,0 16,9 v4 a3,3 0 0 1 -3,3 h-30 a3,3 0 0 1 -3,-3 v-8 a5,5 0 0 1 4,-5 z" fill="#F2F1ED" stroke="#4A5260" stroke-width="1.8"/><path d="M-16,7 h34" stroke="#3FA6A0" stroke-width="3"/><path d="M-6,-8 l3,5 M1,-8 l3,5 M8,-8 l3,5" stroke="#3FA6A0" stroke-width="1.6"/></g>
       <g fill="#FFD56B"><path d="M112,-132 l4,-10 l2,10 l10,2 l-10,2 l-2,10 l-4,-10 l-10,-2 z"/></g>` },
-  hippie: { expr:"paz", anteojos:"#F2B33D",
-    pose:{ piernas:[ [[-10,-50],[-44,-32],[-6,-10],1], [[10,-50],[44,-32],[6,-10],-1] ],
-           brazos:[ [[-27,-100],[-48,-76],[-30,-52]], [[27,-100],[48,-76],[40,-56]] ], torso:{x:0,y:-106} },
-    hy:-136, gorro:`<path d="M-24,-16 q24,-6 48,0 v6 q-24,-6 -48,0 z" fill="#E86B5E" stroke="#8A2F26" stroke-width="1.2"/>`,
-    atras:`<g><circle cx="0" cy="-110" r="88" fill="#A98CF0" opacity=".10"/><circle cx="0" cy="-110" r="66" fill="#A98CF0" opacity=".10"/></g>`,
-    medio:`<g transform="translate(0,-90)"><circle r="7" fill="none" stroke="#F2B33D" stroke-width="2"/><path d="M0,-7 v14 M0,0 l-5,5 M0,0 l5,5" stroke="#F2B33D" stroke-width="2"/></g>`,
-    adelante:`<g><path d="M40,-56 l6,-40" stroke="#5A3A1E" stroke-width="3" stroke-linecap="round"/><circle cx="46" cy="-97" r="3" fill="#E86B5E"/>
-      <g fill="none" stroke="#A98CF0" stroke-width="3" stroke-linecap="round" opacity=".75"><path d="M46,-102 c10,-14 -12,-22 -2,-38 c8,-12 -6,-20 2,-32"/><path d="M58,-110 c8,-10 -6,-16 2,-28" opacity=".6"/><path d="M34,-114 c-8,-10 6,-16 -2,-28" opacity=".6"/></g>
-      <ellipse cx="0" cy="-4" rx="60" ry="9" fill="#C97A4A" opacity=".5"/></g>` },
+  hippie: { expr:"pillo",
+    pose:{ piernas:[ [[-11,-72],[-16,-40],[-20,-8],-1], [[11,-72],[14,-40],[12,-8],1] ],
+           brazos:[ [[-27,-124],[-50,-110],[-56,-86]], [[27,-124],[54,-120],[68,-146]] ] },
+    atras:`<g transform="translate(-56,-80)"><ellipse cx="0" cy="0" rx="20" ry="18" fill="#1A1C22" stroke="#4A4F5C" stroke-width="2"/><path d="M-18,2 q18,-8 34,-2 v8 q-16,-4 -34,2 z" fill="#4FD1E8" opacity=".55"/><path d="M-6,-16 q8,-4 16,2" stroke="#E86B5E" stroke-width="3" fill="none"/></g>`,
+    adelante:`<g>
+      <g transform="translate(70,-150) rotate(-35)"><rect x="-3" y="-4" width="6" height="34" rx="2" fill="#B9B9B9" stroke="#555" stroke-width="1.2"/><path d="M-9,-14 a9,9 0 1 1 18,0 l-4,6 h-10 z" fill="#B9B9B9" stroke="#555" stroke-width="1.2"/><rect x="-3" y="-20" width="6" height="8" fill="#22242A"/></g>
+      <g fill="#B9B9B9" stroke="#555" stroke-width="1"><path d="M96,-176 l5,0 l-2.5,12 z"/><path d="M108,-160 l5,0 l-2.5,12 z"/><circle cx="92" cy="-146" r="3.5"/></g></g>` },
   marian: { expr:"concentrado",
     pose:{ piernas:[ [[-12,-56],[-40,-40],[-30,-6],-1], [[12,-56],[22,-10],[44,-6],1] ],
            brazos:[ [[-27,-108],[-10,-96],[16,-104]], [[27,-108],[44,-96],[36,-106]] ], torso:{x:0,y:-112} },
@@ -867,7 +865,7 @@ GENTE.chupa.adelante = `<g>
   <g stroke="#F2F1ED" stroke-width="1.8" fill="none" opacity=".7" stroke-linecap="round"><path d="M-40,-150 q-4,-8 2,-14"/><path d="M-52,-140 q-4,-8 2,-14"/></g></g>`;
 GENTE.matxi.adelante = `<g>
   <g transform="translate(60,-150) rotate(-20)"><rect x="-16" y="-10" width="32" height="20" rx="2" fill="#F2EBD8" stroke="#8A6B31" stroke-width="1.4"/><path d="M-16,-10 l16,12 l16,-12" fill="none" stroke="#8A6B31" stroke-width="1.4"/><rect x="8" y="-8" width="6" height="6" fill="#E86B5E"/></g>
-  <g transform="translate(96,-178) rotate(-35)"><rect x="-12" y="-8" width="24" height="16" rx="2" fill="#F2EBD8" stroke="#8A6B31" stroke-width="1.2"/><path d="M-12,-8 l12,9 l12,-9" fill="none" stroke="#8A6B31" stroke-width="1.2"/></g>
+  <g transform="translate(98,-180) rotate(-28)"><rect x="-14" y="-10" width="28" height="20" rx="2" fill="#C9483B" stroke="#6E1E14" stroke-width="1.4"/><rect x="-11" y="-7" width="22" height="14" fill="#F2EBD8"/><path d="M0,-7 v14" stroke="#6E1E14" stroke-width="1.4"/></g>
   <g transform="translate(-40,-70)"><path d="M-14,-12 h28 v26 h-28 z" fill="#6B4A2F" stroke="#3A2616" stroke-width="1.6"/><path d="M-14,-12 q14,-10 28,0" fill="#8A6B31" stroke="#3A2616" stroke-width="1.6"/><rect x="-5" y="-2" width="10" height="4" fill="#D9A94F"/></g>
   <g fill="#E86B5E" opacity=".9"><path d="M-74,-120 c0,-6 8,-6 8,0 c0,-6 8,-6 8,0 c0,5 -8,10 -8,10 c0,0 -8,-5 -8,-10 z"/></g></g>`;
 GENTE.damian.adelante = `<g>
@@ -881,12 +879,13 @@ GENTE.damian.adelante = `<g>
    días y cada una con lo suyo. `c` pisa pelo, piel y remera.
    ===================================================================== */
 const FISURAS = {
-  manguero:{ c:{hair:"#5A4A3A", style:"rulos", beard:true, skin:"#D9A47E"}, expr:"sonrisa",
+  manguero:{ c:{hair:"#5A4A3A", style:"rulos", beard:true, skin:"#D9A47E", franja:"#F2C230"}, expr:"sonrisa",
+    gorro:`<path d="M-24,-18 q24,-26 48,0 v6 h-48 z" fill="#1B3A8C" stroke="#0E1F4A" stroke-width="1.4"/><path d="M-22,-12 q22,-4 44,0" stroke="#F2C230" stroke-width="3" fill="none"/><path d="M-26,-12 h58 l-4,8 h-50 z" fill="#0E1F4A"/>`,
     pose:{ brazos:[ [[-27,-124],[-40,-98],[-30,-74]], [[27,-124],[52,-110],[70,-120]] ] },
     adelante:`<g><g transform="translate(70,-120)"><path d="M-8,-10 h16 l-2,22 h-12 z" fill="#F2F1ED" stroke="#8B909C" stroke-width="1.4"/><circle cy="-14" r="5" fill="#F2B33D" stroke="#8A6B31"/></g>
       <g transform="translate(-30,-150)"><rect x="-22" y="-10" width="44" height="18" rx="3" fill="#C9A46B" stroke="#7A5A2E"/><text y="4" text-anchor="middle" font-size="6" font-family="Archivo Black" fill="#3A2616">¿UNA MONEDA?</text></g></g>` },
   trapito:{ c:{hair:"#1E1A18", style:"corto", beard:true, skin:"#C98A62"}, expr:"pillo",
-    gorro:`<path d="M-24,-18 q24,-26 48,0 v6 h-48 z" fill="#D8A33C" stroke="#8A6B31" stroke-width="1.4"/><path d="M-26,-12 h58 l-4,8 h-50 z" fill="#8A6B31"/>`,
+    gorro:`<path d="M-24,-18 q24,-26 48,0 v6 h-48 z" fill="#1B3A8C" stroke="#0E1F4A" stroke-width="1.4"/><path d="M-22,-12 q22,-4 44,0" stroke="#F2C230" stroke-width="3" fill="none"/><path d="M-26,-12 h58 l-4,8 h-50 z" fill="#0E1F4A"/>`,
     pose:{ brazos:[ [[-27,-124],[-50,-104],[-56,-130]], [[27,-124],[48,-104],[60,-84]] ] },
     adelante:`<g><path d="M-62,-132 q-16,14 -10,34 q-4,-20 10,-34 z M-62,-132 q8,20 2,36 l-8,-4 q6,-14 -2,-30 z" fill="#E86B5E" stroke="#8A2F26" stroke-width="1.4"/>
       <g transform="translate(60,-84)"><rect x="-12" y="-6" width="24" height="12" rx="2" fill="#F2F1ED" stroke="#8B909C"/><text y="3" text-anchor="middle" font-size="6" font-family="Archivo Black" fill="#1A1C22">$500</text></g></g>` },
@@ -895,7 +894,7 @@ const FISURAS = {
     atras:`<g><rect x="-74" y="-90" width="64" height="72" rx="3" fill="#6B6B6B" stroke="#3A3A3A" stroke-width="2"/><rect x="-70" y="-122" width="56" height="36" rx="2" fill="#B9A24F" stroke="#7A6A2E"/><rect x="-64" y="-150" width="44" height="30" rx="2" fill="#8A6B31" stroke="#5A4A2E"/><rect x="-58" y="-170" width="30" height="22" rx="2" fill="#2E8B57" stroke="#1C5636"/>
       <circle cx="-62" cy="-14" r="9" fill="#1A1C22" stroke="#666" stroke-width="2"/><circle cx="-22" cy="-14" r="9" fill="#1A1C22" stroke="#666" stroke-width="2"/><path d="M-74,-30 h64" stroke="#3A3A3A" stroke-width="3"/></g>` },
   perro:{ perro:true },
-  medias:{ c:{hair:"#2A1D14", style:"corto", beard:false, skin:"#C98A62"}, expr:"grito",
+  medias:{ c:{hair:"#2A1D14", style:"corto", beard:false, skin:"#C98A62", franja:"#F2C230"}, expr:"grito",
     pose:{ brazos:[ [[-27,-124],[-50,-130],[-60,-150]], [[27,-124],[50,-130],[60,-150]] ] },
     adelante:`<g stroke="#1A1C22" stroke-width="1.2"><path d="M-70,-150 h8 v18 q0,6 -6,6 h-2 z" fill="#E86B5E"/><path d="M-60,-150 h8 v18 q0,6 -6,6 h-2 z" fill="#4FD1E8"/><path d="M52,-150 h8 v18 q0,6 -6,6 h-2 z" fill="#F2B33D"/><path d="M62,-150 h8 v18 q0,6 -6,6 h-2 z" fill="#57A06B"/>
       <path d="M-64,-120 h8 v18 q0,6 -6,6 h-2 z" fill="#A98CF0"/><path d="M56,-120 h8 v18 q0,6 -6,6 h-2 z" fill="#F2F1ED"/></g>
@@ -1021,8 +1020,18 @@ function armarMapa(){
   </svg>`;
   $("svg").addEventListener("click", alTocarMapa);
 }
+/* el lugar libre más cercano a donde se tocó (en px del mapa), o null si no hay ninguno a mano */
+function lugarLibreCerca(ev){
+  const svg=$("svg"), pt=new DOMPoint(ev.clientX, ev.clientY).matrixTransform(svg.getScreenCTM().inverse());
+  let mejor=null, md=34;
+  M.puestos.forEach((p,i)=>{ if(torreEn(E,i)) return; const d=Math.hypot(p[0]-pt.x, p[1]-pt.y); if(d<md){ md=d; mejor=i; } });
+  return mejor;
+}
 function alTocarMapa(ev){
-  const p = ev.target.closest(".puesto"), t = ev.target.closest(".torre");
+  // poniendo o mudando a alguien: manda el lugar libre más cercano, aunque el dibujo de otro amigo lo tape
+  const cerca = (eligiendo || E.mudando) ? lugarLibreCerca(ev) : null;
+  const p = cerca!=null ? document.querySelector(`.puesto[data-i="${cerca}"]`) : ev.target.closest(".puesto");
+  const t = cerca!=null ? null : ev.target.closest(".torre");
   if(t){ torreElegida = +t.dataset.id; eligiendo=null; pintarPanel(); pintar(); return; }
   if(p){ const i=+p.dataset.i;
     if(E.mudando){ const tor=E.torres.find(x=>x.id===E.mudando); if(tor && !mudar(E,tor,i)){ torreElegida=null; } }
@@ -1043,6 +1052,7 @@ const PROYECTIL = {
   notif:`<g transform="scale(1.4)"><rect x="-14" y="-7" width="28" height="14" rx="7" fill="#FFD56B" stroke="#8A6B31" stroke-width="1.5"/><circle cx="-7" r="3" fill="#E86B5E"/><rect x="-1" y="-2" width="10" height="4" rx="2" fill="#8A6B31" opacity=".6"/></g>`,
   masaje:`<g transform="scale(1.6)"><circle r="7" fill="#F2F1ED" stroke="#8B909C" stroke-width="1.5"/><text y="3.5" text-anchor="middle" font-size="9">✋</text></g>`,
   tornillo:`<g transform="scale(1.8)"><path d="M-2.5,-8 h5 v10 l-2.5,5 l-2.5,-5 z" fill="#B9B9B9" stroke="#555"/><path d="M-2,-5 h4 M-2,-2 h4 M-2,1 h4" stroke="#555" stroke-width=".8"/></g>`,
+  libro:`<g transform="scale(1.6)"><rect x="-9" y="-7" width="18" height="14" rx="1.5" fill="#C9483B" stroke="#6E1E14" stroke-width="1.2"/><rect x="-7" y="-5" width="14" height="10" fill="#F2EBD8"/><path d="M0,-5 v10" stroke="#6E1E14" stroke-width="1.2"/><path d="M-5,-2 h3 M-5,1 h3 M2,-2 h3 M2,1 h3" stroke="#8B909C" stroke-width=".8"/></g>`,
   sobre:`<g transform="scale(1.6)"><rect x="-9" y="-6" width="18" height="12" fill="#F2EBD8" stroke="#8A6B31" stroke-width="1.2"/><path d="M-9,-6 l9,7 l9,-7" fill="none" stroke="#8A6B31" stroke-width="1.2"/><rect x="4" y="-4" width="3" height="3" fill="#E86B5E"/></g>`,
   audio:`<g transform="scale(1.5)"><rect x="-16" y="-6" width="32" height="12" rx="6" fill="#57A06B" stroke="#2E5A3A" stroke-width="1.2"/><path d="M-10,0 h2 M-6,-2 v4 M-2,-3.5 v7 M2,-2 v4 M6,-3 v6 M10,0 h2" stroke="#F2F1ED" stroke-width="1.6"/></g>`,
   reel:`<g transform="scale(1.6)"><rect x="-6" y="-10" width="12" height="20" rx="2.5" fill="#1A1C22" stroke="#4FD1E8" stroke-width="1.4"/><path d="M-2,-3 l5,3 l-5,3 z" fill="#4FD1E8"/><path d="M-9,-9 l-3,-3 M9,-9 l3,-3" stroke="#4FD1E8" stroke-width="1.5"/></g>`,
@@ -1187,7 +1197,7 @@ function mostrarMapas(){
 }
 function mostrarPortada(){ corriendo=false; $("tapa").hidden=true; $("portada").hidden=false; }
 function empezar(k){
-  mapaActual=k; E=crearPartida(k); armarMapa(); torreElegida=null; eligiendo=null; $("tapa").hidden=true; pintarPanel(); pintar(); corriendo=true;
+  mapaActual=k; E=crearPartida(k); armarMapa(); torreElegida=null; eligiendo=null; $("tapa").hidden=true; $("portada").hidden=true; pintarPanel(); pintar(); corriendo=true;
 }
 function paso(ts){
   const dt=Math.min(.05, (ts-ultimoT)/1000||0); ultimoT=ts;
