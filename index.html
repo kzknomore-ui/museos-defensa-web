@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Los Museos: la defensa del quincho</title>
+<meta name="description" content="Las fisuras del barrio vienen por las piezas. Poné a los amigos en la vereda y que no entren.">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0E1014">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600;700&display=swap">
+<style>
+  :root{
+    --bg:#0E1014; --panel:#171A21; --panel2:#1F232C; --sunk:#0A0C10; --line:#2A2F3A; --hair:#39404E;
+    --ink:#F2F1ED; --body:#C8CBD3; --dim:#8B909C;
+    --brass:#D9A94F; --alarm:#E86B5E; --patina:#7FB6A4; --aura:#A98CF0;
+    --vereda:#2A2E39; --vereda2:#232732; --pasto:#2F4A3A; --camino:#3C4150; --camino2:#4A5062;
+  }
+  @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+    --bg:#EFEAE0; --panel:#FFFDF8; --panel2:#F3EEE3; --sunk:#E4DED0; --line:#D9D2C3; --hair:#C9C2B2;
+    --ink:#1B1A17; --body:#3C3A34; --dim:#7A766C;
+    --brass:#A77A1E; --alarm:#C9483B; --patina:#3E8C77; --aura:#6E4FD1;
+    --vereda:#D9D2C2; --vereda2:#CFC7B5; --pasto:#9DBF8E; --camino:#B9B1A0; --camino2:#A79F8E; } }
+  :root[data-theme="light"]{
+    --bg:#EFEAE0; --panel:#FFFDF8; --panel2:#F3EEE3; --sunk:#E4DED0; --line:#D9D2C3; --hair:#C9C2B2;
+    --ink:#1B1A17; --body:#3C3A34; --dim:#7A766C;
+    --brass:#A77A1E; --alarm:#C9483B; --patina:#3E8C77; --aura:#6E4FD1;
+    --vereda:#D9D2C2; --vereda2:#CFC7B5; --pasto:#9DBF8E; --camino:#B9B1A0; --camino2:#A79F8E; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--body);
+    font:15px/1.35 "Archivo","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+  #app{height:100%;display:flex;flex-direction:column;
+    padding:max(6px,env(safe-area-inset-top)) 8px max(8px,env(safe-area-inset-bottom));gap:6px;max-width:1100px;margin:0 auto}
+
+  /* arriba: piezas, aura, ola */
+  header{display:flex;align-items:center;gap:6px;flex:none}
+  header b{font:400 15px/1 "Archivo Black","Archivo",sans-serif;color:var(--ink);letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  header b .largo{display:none}
+  @media (min-width:600px){ header b .largo{display:inline} }
+  .dato{display:flex;align-items:center;gap:5px;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:6px 9px;min-height:44px;font-weight:700;color:var(--ink);white-space:nowrap}
+  .dato i{display:inline-block;width:10px;height:10px;border-radius:3px}
+  .dato.piezas i{background:var(--brass)} .dato.aura i{background:var(--aura);border-radius:50%} .dato.ola i{background:var(--alarm)}
+  .dato.late{animation:late .5s ease}
+  @keyframes late{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+  header .tema{margin-left:auto;min-width:44px;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font-size:16px}
+
+  /* el medio: el mapa y, en la compu, el panel al costado */
+  main{flex:1;min-height:0;display:flex;gap:8px}
+  #mapa{flex:1;min-height:0;display:grid;place-items:center;position:relative}
+  #mapa svg{max-width:100%;max-height:100%;width:100%;height:100%;display:block;touch-action:manipulation}
+  .puesto{cursor:pointer}
+  .puesto .marca{fill:var(--brass);fill-opacity:.0;stroke:var(--brass);stroke-opacity:0;stroke-width:2;stroke-dasharray:4 4;transition:fill-opacity .2s,stroke-opacity .2s}
+  svg.eligiendo .puesto.libre .marca{fill-opacity:.18;stroke-opacity:.9}
+  svg.eligiendo .puesto.libre{animation:lat 1.2s ease-in-out infinite}
+  @keyframes lat{50%{opacity:.55}}
+  .torre{cursor:pointer}
+  .torre.elegida .aro{stroke-opacity:.8}
+  .aro{fill:var(--aura);fill-opacity:.07;stroke:var(--aura);stroke-opacity:0;stroke-width:1.5;stroke-dasharray:5 5;transition:stroke-opacity .2s}
+  .torre.molesta{opacity:.5}
+  .vida{fill:var(--alarm)} .vidaFondo{fill:#000;fill-opacity:.4} .escudo{fill:var(--patina)}
+  .enemigo.golpe{filter:brightness(1.6)}
+  .andando{animation:andar .5s ease-in-out infinite alternate;transform-origin:0 0}
+  @keyframes andar{from{transform:scale(var(--esc,.25)) rotate(-4deg)}to{transform:scale(var(--esc,.25)) rotate(4deg)}}
+  .torre .cuerpo{animation:respirar 2.4s ease-in-out infinite;transform-origin:0 0}
+  @keyframes respirar{50%{transform:scale(var(--esc,.3)) translateY(-3px)}}
+  .danio{font:700 11px "Archivo Black","Archivo",sans-serif;fill:#FFF;paint-order:stroke;stroke:#000;stroke-width:3px;stroke-linejoin:round}
+  .nube circle{animation:flotar 4s ease-in-out infinite}
+  @keyframes flotar{50%{transform:translateY(-4px)}}
+  .aviso{font:700 12px "Archivo",sans-serif;fill:var(--ink);paint-order:stroke;stroke:var(--bg);stroke-width:3px;stroke-linejoin:round}
+
+  /* abajo: la lista de amigos o la ficha del elegido */
+  footer{flex:none;display:flex;flex-direction:column;gap:6px}
+  #panelLado{display:none}
+  .fila{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 4px;scrollbar-width:none}
+  .fila::-webkit-scrollbar{display:none}
+  .amigo{flex:none;width:72px;min-height:84px;border:1px solid var(--line);border-radius:12px;background:var(--panel);
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:4px 3px;gap:2px;position:relative;overflow:hidden}
+  .amigo svg{width:46px;height:50px}
+  .amigo b{font:700 11px/1 "Archivo",sans-serif;color:var(--ink);max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .amigo small{font-size:11px;color:var(--aura);font-weight:700}
+  .amigo.elegido{border-color:var(--brass);box-shadow:0 0 0 2px var(--brass) inset}
+  .amigo.puesto,.amigo.caro,.amigo.laburando{opacity:.45}
+  .amigo .tag{position:absolute;top:4px;left:4px;right:4px;font:700 9px/1.1 "Archivo",sans-serif;color:var(--dim);text-align:center}
+  .acciones{display:flex;gap:6px;flex-wrap:wrap}
+  .acciones button,.ola{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);
+    padding:0 14px;font-weight:700;display:flex;align-items:center;gap:6px}
+  .acciones button small{color:var(--dim);font-weight:400}
+  .acciones .poder{border-color:var(--aura);color:var(--aura)}
+  .acciones .vender{margin-left:auto;color:var(--alarm)}
+  .ola{background:var(--brass);color:#1A1C22;border-color:transparent;justify-content:center;font:400 16px "Archivo Black","Archivo",sans-serif}
+  .ola:disabled{opacity:.45;cursor:default}
+  .ficha{display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 10px}
+  .ficha svg{width:44px;height:52px;flex:none}
+  .ficha b{color:var(--ink)} .ficha p{margin:0;font-size:12.5px;color:var(--body)}
+  .ficha .cerrar{margin-left:auto;min-width:44px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink)}
+  .ayuda{font-size:12px;color:var(--dim);padding:0 2px}
+
+  /* fin de partida y portada: ventana flotante */
+  #tapa{position:fixed;inset:0;background:#000A;display:grid;place-items:center;padding:16px;z-index:9}
+  #tapa[hidden]{display:none}
+  .caja{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;max-width:420px;width:100%;box-shadow:0 18px 44px #000A;display:flex;flex-direction:column;gap:10px}
+  .caja h1{margin:0;font:400 24px/1.1 "Archivo Black","Archivo",sans-serif;color:var(--ink)}
+  .caja p{margin:0}
+  .caja .ola{width:100%}
+  .mapas{display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto}
+  .mapaBtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:52px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);text-align:left}
+  .mapaBtn small{color:var(--dim);font-weight:400}
+  .mapaBtn i{font-style:normal;color:var(--patina);font-size:12px;font-weight:700}
+  .mapaBtn.cerrado{opacity:.45;cursor:default}
+  .mapaBtn.ganado{border-color:var(--patina)}
+  .salir{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:0 14px;font-weight:700}
+
+  @media (min-width:900px) and (orientation:landscape){
+    main{flex-direction:row}
+    #panelLado{display:flex;width:340px;flex:none;justify-content:flex-start}
+    #panelAbajo{display:none}
+    .fila{flex-wrap:wrap;overflow:visible}
+    .amigo{width:78px}
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important} }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <b><span class="largo">La defensa del </span>Quincho</b>
+    <span class="dato piezas" id="dPiezas"><i></i><span>10</span></span>
+    <span class="dato aura" id="dAura"><i></i><span>0</span></span>
+    <span class="dato ola" id="dOla"><i></i><span>Ola 0/10</span></span>
+    <button class="tema" id="tema" type="button" aria-label="Modo claro u oscuro">◐</button>
+  </header>
+  <main>
+    <div id="mapa"></div>
+    <footer id="panelLado"></footer>
+  </main>
+  <footer id="panelAbajo"></footer>
+</div>
+<div id="tapa">
+  <div class="caja">
+    <h1>Los Museos: la defensa del quincho</h1>
+  </div>
+</div>
+<script>
+/* =====================================================================
+   DATOS DEL JUEGO. Todo lo que es contenido o balance está acá arriba.
+   ===================================================================== */
+const CREW = {
+  tomy  :{n:"Tomy",      hair:"#C2571F", style:"rulos",      beard:false, tall:1.00, shirt:"#4E8FD0"},
+  lamber:{n:"Lamber",    hair:"#1E1A18", style:"corto",      beard:true,  tall:1.00, shirt:"#57A06B"},
+  chupa :{n:"Chupa",     hair:"#1E1A18", style:"corto",      beard:false, tall:1.00, shirt:"#C9603F"},
+  kzk   :{n:"Kzk",       hair:"#A9793F", style:"corto",      beard:true,  tall:1.00, shirt:"#8A6BC4"},
+  matxi :{n:"Matxi",     hair:"#6B4526", style:"corto",      beard:false, tall:1.00, shirt:"#D8A33C"},
+  chuna :{n:"Chuna",     hair:"#3A2416", style:"largorulos", beard:false, tall:1.00, shirt:"#3FA6A0"},
+  hippie:{n:"El Hippie", hair:"#1E1A18", style:"corto",      beard:false, tall:1.18, shirt:"#22242A"},
+  marian:{n:"Marian",    hair:"#7A5230", style:"largo",      beard:false, tall:1.10, shirt:"#5B7FD4"},
+  damian:{n:"Damián",    hair:"#1E1A18", style:"medio",      beard:false, tall:1.00, shirt:"#7FA23E"},
+  negro :{n:"El Negro",  hair:"#2A1D14", style:"corto",      beard:true,  tall:1.00, shirt:"#6B4A2F", skin:"#8A5A38"},
+};
+
+/* Cada amigo como torre. rango en px del mapa, cadencia en segundos entre tiros,
+   danio por tiro. `efecto` es lo que le pasa al que recibe el tiro. `desde` es
+   la ola a partir de la cual se lo puede poner (Chuna llega tarde del laburo). */
+const TORRES = {
+  tomy:  { rol:"El cebador", tipo:"area", costo:70, rango:95, cadencia:1.4, danio:9, salpica:42,
+           efecto:{lento:.5, dura:2}, proyectil:"mate",
+           tira:"Mates. El que agarra uno se queda tomándolo.",
+           frase:["ni ahí gato","bien ahí gato","tenés razón gato"],
+           poder:{n:"Ronda de mate", cuesta:60, pie:"los de cerca se sientan 2,5 s",
+                  hace:(e,t)=>{ for(const en of enRango(e,t)) aplicar(en,{quieto:2.5}); } } },
+  lamber:{ rol:"El manija", tipo:"lejos", costo:60, rango:110, cadencia:.35, danio:5, proyectil:"notif",
+           tira:"Notificaciones, una atrás de otra. Poco daño, no para nunca.",
+           frase:["bldo posta","corte na q ver","pfff bldo"],
+           poder:{n:"Agenda llena", cuesta:50, pie:"5 s tirando al doble",
+                  hace:(e,t)=>{ t.rafaga=5; } } },
+  chupa: { rol:"El masajista", tipo:"lejos", costo:80, rango:100, cadencia:1.1, danio:14, proyectil:"masaje",
+           efecto:{dormido:1},
+           tira:"Masajes. Al que le toca uno se queda dormido un segundo.",
+           frase:["Museoss, buen diaa","keee??","ta bie?"],
+           poder:{n:"Caja de mudanza", cuesta:70, pie:"los de cerca se frenan 3 s y les duele",
+                  hace:(e,t)=>{ for(const en of enRango(e,t)){ aplicar(en,{quieto:3}); herir(e,en,20); } } } },
+  kzk:   { rol:"El técnico", tipo:"apoyo", costo:90, rango:95, cadencia:1.0, danio:10, proyectil:"tornillo",
+           vecinos:{rango:80, danio:1.25},
+           tira:"Tornillos. Los amigos de al lado pegan un 25% más.",
+           frase:["jajaja mis diseños dice el chanta","amigo, esto se mejora"],
+           poder:{n:"Monopatinazo", cuesta:40, pie:"se muda a otro lugar gratis",
+                  hace:(e,t)=>{ e.mudando=t.id; } } },
+  matxi: { rol:"El cartero", tipo:"lejos", costo:100, rango:120, cadencia:2.2, danio:38, proyectil:"sobre",
+           tira:"Sobres. El cartero no llama dos veces: un golpe fuerte y seguro.",
+           frase:["Quizás, sea... es un montón","flah, amigo"],
+           poder:{n:"Seducción", cuesta:65, pie:"los que lo miran se dan vuelta 2 s",
+                  hace:(e,t)=>{ for(const en of enRango(e,t)) aplicar(en,{reversa:2}); } } },
+  chuna: { rol:"Recién salido del laburo", tipo:"cerca", costo:85, rango:130, cadencia:1.6, danio:16, proyectil:"audio",
+           linea:26, desde:3,
+           tira:"Audios de 5 minutos. Le pegan a todos los que están en la línea.",
+           frase:["Holis bellos míos, soy yoooo","me están manijeando en el trabajo"],
+           poder:{n:"Piernas", cuesta:80, pie:"corre todo el camino pateando a todos",
+                  hace:(e,t)=>{ for(const en of e.enemigos) if(!en.muerto) herir(e,en,22); } } },
+  hippie:{ rol:"Buena onda", tipo:"area", costo:75, rango:85, cadencia:0, danio:0, nube:{lento:.6},
+           tira:"Humo de sahumerio. Los que lo respiran van más lento.",
+           frase:["flama","tranqui, está flama"],
+           poder:{n:"Buena onda", cuesta:55, pie:"a los de la nube se les borra el escudo",
+                  hace:(e,t)=>{ for(const en of enRango(e,t)){ en.escudo=0; herir(e,en,10); } } } },
+  marian:{ rol:"Ojo de halcón", tipo:"lejos", costo:110, rango:160, cadencia:1.8, danio:30, proyectil:"reel",
+           rebota:.5,
+           tira:"Reels. Lejos, fuerte, y el reel rebota a otro.",
+           frase:["mal","loco, mal","terrible amigo"],
+           poder:{n:"Sin filtro", cuesta:60, pie:"3 reels al triple",
+                  hace:(e,t)=>{ t.triple=3; } } },
+  damian:{ rol:"El director", tipo:"area", costo:65, rango:90, cadencia:1.2, danio:8, salpica:36,
+           efecto:{quieto:.45}, proyectil:"claqueta",
+           tira:"Claquetazos. «¡Corte!»: todos los de alrededor se frenan un instante.",
+           frase:["vamoo","neh, amix"],
+           poder:{n:"Luces calientes", cuesta:55, pie:"los encandila: retroceden",
+                  hace:(e,t)=>{ for(const en of enRango(e,t)) aplicar(en,{empuje:70}); } } },
+  negro: { rol:"El asador", tipo:"area", costo:95, rango:100, cadencia:1.5, danio:12, salpica:48, proyectil:"chori",
+           tira:"Choris de la parrilla. Salpican a todos los de alrededor.",
+           frase:["dale macarni","uhh amigo","divino"],
+           poder:{n:"Miel de carpincho", cuesta:70, pie:"los de cerca quedan pegados 3 s",
+                  hace:(e,t)=>{ for(const en of enRango(e,t)) aplicar(en,{quieto:3}); } } },
+};
+const MEJORA = { niveles:3, danio:1.45, rango:1.08, costo:.6 };   // costo de mejorar = costo base × 0.6 × nivel
+
+/* Las fisuras del barrio. Vienen por la vereda a llevarse las piezas. vel en px/s. */
+const ENEMIGOS = {
+  manguero:   { n:"El Manguero",     vida:60,  vel:38,  aura:8,  shirt:"#4A5A7A", look:"manguero",
+                d:"«¿No tenés una moneda?» Camina y pide." },
+  trapito:    { n:"El Trapito",      vida:55,  vel:66,  aura:10, shirt:"#D8A33C", look:"trapito",
+                d:"Apurado, con el trapo al hombro. Te cuida el auto aunque no tengas." },
+  carrito:    { n:"El del Carrito",  vida:240, vel:24,  aura:22, shirt:"#8A8A8A", look:"carrito",
+                d:"Lento, con el carrito cargado hasta arriba. Aguanta todo." },
+  perro:      { n:"El Perro de la Esquina", vida:48, vel:105, aura:12, shirt:"#B07A3E", look:"perro", inmune:["lento"],
+                d:"Corre a todo lo que se mueve. El humo no lo frena." },
+  medias:     { n:"El de las Medias", vida:110, vel:34,  aura:18, shirt:"#5A4A3A", look:"medias", escudo:45,
+                d:"«Tres pares por mil.» Las medias lo protegen." },
+  vecina:     { n:"La Vecina Chusma", vida:75,  vel:44,  aura:16, shirt:"#C4506B", look:"vecina", molesta:{cada:4, dura:2},
+                d:"Se para a charlar y un amigo deja de tirar 2 s." },
+  jefe5:      { n:"El Trapito Jefe", vida:650, vel:28, aura:70, shirt:"#3A2A1A", look:"trapito", escudo:120, grande:1.5,
+                d:"El que maneja la cuadra. Cobra por estacionar en tu propia casa." },
+  lunes:      { n:"El Rey de la Esquina", vida:1800, vel:18, aura:150, shirt:"#1A1C22", look:"rey", grande:1.9,
+                inmune:["lento","quieto","reversa","empuje","dormido"],
+                d:"Está en el kiosco desde 1998. No se lo frena. Llega igual." },
+};
+
+/* Mapas. El camino es una lista de puntos; los puestos son dónde se puede poner a alguien.
+   `paleta` pisa los colores del escenario; `deco` dice qué dibuja la vista alrededor.
+   `dificultad` multiplica la vida de las fisuras. */
+function olas(lista){ return lista.map(o=>o.split(" ")); }
+const MAPAS = {
+  quincho: {
+    n:"La vereda del quincho", sub:"Las fisuras vienen por la cuadra.", ancho:390, alto:560, piezas:10, aura:200, dificultad:1, deco:"barrio",
+    paleta:{pasto:"#2F4A3A", camino:"#3C4150", camino2:"#4A5062", vereda2:"#232732"},
+    paletaClara:{pasto:"#9DBF8E", camino:"#B9B1A0", camino2:"#A79F8E", vereda2:"#CFC7B5"},
+    camino:[[40,-30],[40,80],[300,80],[300,190],[90,190],[90,300],[320,300],[320,410],[140,410],[140,470],[195,540]],
+    puestos:[[110,40],[200,40],[340,130],[170,135],[40,250],[200,250],[260,250],[40,360],[230,360],[350,360],[60,470],[290,470]],
+    olas:olas(["manguero*7","manguero*8 trapito*4","manguero*6 trapito*6 carrito*2","perro*7 manguero*6","jefe5*1 manguero*6 trapito*4",
+      "vecina*3 trapito*8 carrito*3","medias*6 perro*6 manguero*4","carrito*5 vecina*4 manguero*8","medias*7 trapito*8 perro*7","lunes*1 medias*4 vecina*3 carrito*3"]),
+  },
+  playa: {
+    n:"La playa", sub:"Vinieron de vacaciones. Las fisuras también.", ancho:390, alto:560, piezas:10, aura:250, dificultad:1.0, deco:"playa",
+    paleta:{pasto:"#B89A5E", camino:"#8C7A4E", camino2:"#A08C5C", vereda2:"#9A824E"},
+    paletaClara:{pasto:"#F0DCA8", camino:"#D4BC84", camino2:"#E2CC96", vereda2:"#DDC68E"},
+    camino:[[-30,60],[120,60],[120,170],[330,170],[330,280],[60,280],[60,400],[300,400],[300,470],[195,540]],
+    puestos:[[60,120],[190,115],[260,110],[360,110],[200,225],[80,225],[360,340],[180,340],[120,460],[240,460],[30,480],[350,480]],
+    olas:olas(["manguero*8 perro*2","trapito*8 manguero*4","perro*8 manguero*6","carrito*3 trapito*8","jefe5*1 perro*6 manguero*6",
+      "vecina*4 medias*4 trapito*6","perro*10 carrito*3","medias*7 vecina*4 manguero*8","carrito*6 trapito*10 perro*6","lunes*1 perro*8 medias*5 vecina*3"]),
+  },
+  montania: {
+    n:"La montaña", sub:"Subieron en micro. Bajan en patas.", ancho:390, alto:560, piezas:10, aura:290, dificultad:1.06, deco:"montania",
+    paleta:{pasto:"#3A4A52", camino:"#5A6470", camino2:"#6A7482", vereda2:"#2A3238"},
+    paletaClara:{pasto:"#C9D4DA", camino:"#9AA6B2", camino2:"#AEB9C4", vereda2:"#B4C0C8"},
+    camino:[[195,-30],[195,70],[40,120],[350,190],[40,270],[350,350],[60,430],[195,470],[195,540]],
+    puestos:[[100,40],[290,40],[120,160],[270,130],[120,230],[280,260],[120,320],[270,400],[110,470],[290,470],[30,360],[360,290]],
+    olas:olas(["trapito*8 manguero*4","perro*8 trapito*4","medias*5 manguero*8","carrito*4 perro*8","jefe5*1 trapito*8 medias*4",
+      "vecina*5 perro*8 carrito*3","medias*8 trapito*10","carrito*6 vecina*5 perro*8","medias*10 perro*10","lunes*1 carrito*5 medias*6 vecina*4"]),
+  },
+  ciudad: {
+    n:"La ciudad", sub:"Pleno centro. Fisuras de todas las cuadras.", ancho:390, alto:560, piezas:10, aura:360, dificultad:1.04, deco:"ciudad",
+    paleta:{pasto:"#2A2A30", camino:"#44454E", camino2:"#55565F", vereda2:"#1E1E24"},
+    paletaClara:{pasto:"#C8C6C0", camino:"#9A9892", camino2:"#AEACA6", vereda2:"#B8B6B0"},
+    camino:[[-30,100],[80,100],[80,30],[200,30],[200,150],[320,150],[320,260],[60,260],[60,380],[330,380],[330,470],[195,470],[195,540]],
+    puestos:[[30,40],[140,80],[260,90],[360,90],[140,210],[260,210],[30,320],[200,320],[360,320],[140,430],[260,430],[30,470]],
+    olas:olas(["manguero*10 trapito*4","trapito*10 perro*4","medias*8 carrito*3","vecina*6 perro*10","jefe5*1 medias*6 trapito*8",
+      "carrito*6 vecina*6 manguero*8","perro*12 medias*6","carrito*7 trapito*10","medias*8 vecina*4 perro*7","lunes*1 medias*4 carrito*4 vecina*2"]),
+  },
+  esquina: {
+    n:"La esquina del kiosco", sub:"El Rey está desde 1998. Hoy lo acompañan todos.", ancho:390, alto:560, piezas:10, aura:380, dificultad:1.15, deco:"esquina",
+    paleta:{pasto:"#1E1A2E", camino:"#3A3550", camino2:"#4A4462", vereda2:"#14101E"},
+    paletaClara:{pasto:"#D8CFE8", camino:"#A89CC0", camino2:"#BCB0D2", vereda2:"#C4B8DA"},
+    camino:[[40,-30],[40,120],[340,120],[340,220],[60,220],[60,330],[330,330],[330,430],[90,430],[90,500],[195,540]],
+    puestos:[[110,60],[230,60],[340,50],[200,170],[110,170],[350,280],[200,275],[40,280],[200,380],[360,380],[40,390],[250,480]],
+    olas:olas(["trapito*10 perro*6","medias*8 manguero*10","carrito*6 vecina*6","perro*14 trapito*8","jefe5*1 medias*10 perro*6",
+      "carrito*8 vecina*8 medias*6","jefe5*2 trapito*10","perro*16 medias*8 carrito*6","jefe5*2 vecina*8 medias*10 carrito*6","lunes*2 jefe5*2 medias*8 carrito*8"]),
+  },
+};
+const ORDEN_MAPAS = ["quincho","playa","montania","ciudad","esquina"];
+const REGLAS = { bonoOla:35, bonoApuro:25, separacion:1.0, llegaRoba:1, escalaVida:.18, escalaVel:.02 };  // cada ola, las fisuras vienen con más vida y un poco más rápido
+
+/* =====================================================================
+   MOTOR. Funciones puras sobre `e` (el estado). Nada del navegador acá:
+   el arnés las corre en node. Todo el azar pasa por AZAR.
+   ===================================================================== */
+let AZAR = Math.random;
+const ARCO = { mate:30, chori:34, sobre:22, claqueta:26, tornillo:18, masaje:14, notif:0, reel:0, audio:0 };
+const dist = (a,b) => Math.hypot(a[0]-b[0], a[1]-b[1]);
+
+function crearPartida(mapaKey){
+  const m = MAPAS[mapaKey];
+  const largos=[]; let L=0;
+  for(let i=1;i<m.camino.length;i++){ L+=dist(m.camino[i-1],m.camino[i]); largos.push(L); }
+  return { mapa:mapaKey, piezas:m.piezas, aura:m.aura, ola:0, enOla:false, t:0,
+           torres:[], enemigos:[], tiros:[], avisos:[], cola:[], largos, largo:L,
+           ids:1, fin:null, mudando:null, matados:0, nuevos:[], efectos:[] };
+}
+function puntoEnCamino(e, d){
+  const c = MAPAS[e.mapa].camino, L = e.largos;
+  if(d<=0) return c[0];
+  for(let i=0;i<L.length;i++){
+    if(d<=L[i]){ const d0 = i?L[i-1]:0, t=(d-d0)/(L[i]-d0); const a=c[i], b=c[i+1];
+      return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t]; }
+  }
+  return c[c.length-1];
+}
+function torreEn(e, puesto){ return e.torres.find(t=>t.puesto===puesto); }
+function puedePoner(e, clave, puesto){
+  const T=TORRES[clave];
+  if(e.fin) return "terminó";
+  if(torreEn(e,puesto)) return "ocupado";
+  if(e.torres.some(t=>t.clave===clave)) return "ya está";
+  if(T.desde && e.ola+1 < T.desde) return "laburando";
+  if(e.aura < T.costo) return "aura";
+  return null;
+}
+function poner(e, clave, puesto){
+  const por = puedePoner(e,clave,puesto); if(por) return por;
+  const T=TORRES[clave], p=MAPAS[e.mapa].puestos[puesto];
+  e.aura -= T.costo;
+  e.torres.push({ id:e.ids++, clave, puesto, x:p[0], y:p[1], nivel:1, enfriando:0, rafaga:0, triple:0, molesta:0, tiros:0 });
+  aviso(e, CREW[clave].n+": "+elegir(T.frase));
+  return null;
+}
+function mudar(e, torre, puesto){
+  if(torreEn(e,puesto)) return "ocupado";
+  const p=MAPAS[e.mapa].puestos[puesto]; torre.puesto=puesto; torre.x=p[0]; torre.y=p[1]; e.mudando=null; return null;
+}
+function costoMejora(t){ return Math.round(TORRES[t.clave].costo*MEJORA.costo*t.nivel); }
+function mejorar(e, t){
+  if(t.nivel>=MEJORA.niveles) return "tope";
+  const c=costoMejora(t); if(e.aura<c) return "aura";
+  e.aura-=c; t.nivel++; return null;
+}
+function vender(e, t){
+  e.aura += Math.round(TORRES[t.clave].costo*.6);
+  e.torres = e.torres.filter(x=>x!==t); if(e.mudando===t.id) e.mudando=null;
+}
+function usarPoder(e, t){
+  const P=TORRES[t.clave].poder; if(e.aura<P.cuesta) return "aura"; if(e.fin) return "terminó";
+  e.aura-=P.cuesta; P.hace(e,t); aviso(e, P.n+"!"); return null;
+}
+function rangoDe(t){ return TORRES[t.clave].rango * Math.pow(MEJORA.rango, t.nivel-1); }
+function danioDe(e,t){
+  let d = TORRES[t.clave].danio * Math.pow(MEJORA.danio, t.nivel-1);
+  for(const k of e.torres) if(k!==t && TORRES[k.clave].vecinos && dist([k.x,k.y],[t.x,t.y])<=TORRES[k.clave].vecinos.rango) d*=TORRES[k.clave].vecinos.danio;
+  if(t.triple>0) d*=3;
+  return d;
+}
+function enRango(e, t){ const r=rangoDe(t); return e.enemigos.filter(en=>!en.muerto && dist([en.x,en.y],[t.x,t.y])<=r); }
+function aplicar(en, ef){
+  const E=ENEMIGOS[en.tipo], inm = E.inmune||[];
+  for(const k in ef){ if(inm.includes(k)) continue;
+    if(k==="lento"){ en.lento=Math.min(en.lento??1, ef.lento); en.lentoT=Math.max(en.lentoT||0, ef.dura||1); }
+    else if(k==="dura"){}
+    else if(k==="empuje"){ en.d=Math.max(0, en.d-ef.empuje); }
+    else en[k]=Math.max(en[k]||0, ef[k]);
+  }
+}
+function herir(e, en, danio){
+  if(en.muerto) return;
+  if(en.escudo>0){ const a=Math.min(en.escudo,danio); en.escudo-=a; danio-=a; }
+  en.vida-=danio; en.golpe=.15;
+  if(en.vida<=0){ en.muerto=true; e.aura+=ENEMIGOS[en.tipo].aura; e.matados++; }
+}
+function elegir(l){ return l[Math.floor(AZAR()*l.length)]; }
+function aviso(e, txt){ e.avisos.push({txt, t:e.t}); if(e.avisos.length>6) e.avisos.shift(); }
+
+function iniciarOla(e){
+  if(e.enOla || e.fin) return false;
+  const m=MAPAS[e.mapa]; if(e.ola>=m.olas.length) return false;
+  if(e.ola>0 && e.enemigos.length===0 && e.colaVacia) e.aura+=REGLAS.bonoApuro;  // apurarse paga
+  e.cola=[]; let t=0;
+  for(const item of m.olas[e.ola]){ const [tipo,n]=item.split("*");
+    for(let i=0;i<+n;i++){ e.cola.push({tipo, en:t}); t+=REGLAS.separacion; } }
+  e.cola.sort((a,b)=>a.en-b.en); e.olaT=0; e.ola++; e.enOla=true; e.colaVacia=false;
+  aviso(e, "Ola "+e.ola+(e.ola===5?": viene el Trapito Jefe":e.ola===10?": llega el Rey de la Esquina":""));
+  return true;
+}
+function soltar(e, tipo){
+  const E=ENEMIGOS[tipo], f=(1+REGLAS.escalaVida*(e.ola-1))*(MAPAS[e.mapa].dificultad||1), vida=Math.round(E.vida*f);
+  e.enemigos.push({ id:e.ids++, tipo, d:0, x:0, y:0, vida, vidaMax:vida, vel:E.vel*(1+REGLAS.escalaVel*(e.ola-1)), escudo:E.escudo||0, lento:1, lentoT:0,
+                    quieto:0, dormido:0, reversa:0, golpe:0, dir:1, molestaT:E.molesta?E.molesta.cada:0, muerto:false, llego:false });
+}
+function avanzar(e, dt){
+  if(e.fin) return;
+  e.t+=dt;
+  // la cola de la ola
+  if(e.enOla){ e.olaT+=dt; while(e.cola.length && e.cola[0].en<=e.olaT) soltar(e, e.cola.shift().tipo);
+    if(!e.cola.length) e.colaVacia=true; }
+  // enemigos
+  for(const en of e.enemigos){ if(en.muerto||en.llego) continue;
+    const E=ENEMIGOS[en.tipo];
+    if(en.golpe>0) en.golpe-=dt;
+    let v=en.vel;
+    if(en.lentoT>0){ v*=en.lento; en.lentoT-=dt; if(en.lentoT<=0) en.lento=1; }
+    // nube del hippie
+    for(const t of e.torres){ const N=TORRES[t.clave].nube; if(N && !(E.inmune||[]).includes("lento") && dist([en.x,en.y],[t.x,t.y])<=rangoDe(t)) v*=N.lento; }
+    if(en.quieto>0){ en.quieto-=dt; v=0; }
+    if(en.dormido>0){ en.dormido-=dt; v=0; }
+    if(en.reversa>0){ en.reversa-=dt; v=-v; }
+    en.d=Math.max(0, en.d+v*dt);
+    const ax=en.x; [en.x,en.y]=puntoEnCamino(e,en.d); if(Math.abs(en.x-ax)>.05) en.dir=en.x>ax?1:-1;
+    if(E.molesta){ en.molestaT-=dt; if(en.molestaT<=0){ en.molestaT=E.molesta.cada;
+      let mejor=null, md=1e9; for(const t of e.torres){ const dd=dist([t.x,t.y],[en.x,en.y]); if(dd<md){md=dd;mejor=t;} }
+      if(mejor && md<140){ mejor.molesta=E.molesta.dura; aviso(e, E.n+" le ofrece algo a "+CREW[mejor.clave].n); } } }
+    if(en.d>=e.largo){ en.llego=true; e.piezas-=REGLAS.llegaRoba; aviso(e, E.n+" se llevó una pieza"); }
+  }
+  // torres
+  for(const t of e.torres){ const T=TORRES[t.clave];
+    if(t.molesta>0){ t.molesta-=dt; continue; }
+    if(t.rafaga>0) t.rafaga-=dt;
+    if(!T.proyectil) continue;
+    t.enfriando-=dt; if(t.enfriando>0) continue;
+    const cand=enRango(e,t); if(!cand.length) continue;
+    const obj=cand.reduce((a,b)=>a.d>b.d?a:b);   // el que va más adelante
+    t.enfriando = T.cadencia/(t.rafaga>0?2:1);
+    const danio=danioDe(e,t); if(t.triple>0) t.triple--;
+    t.tiros++;
+    e.tiros.push({ id:e.ids++, de:t.id, tipo:T.proyectil, x:t.x, y:t.y-30, x0:t.x, y0:t.y-30, a:obj.id, danio, vel:260, p:0, arco:ARCO[T.proyectil]||0 });
+    if(T.linea){ // el audio le pega a todos los que están cerca de la línea torre→objetivo
+      const ax=t.x, ay=t.y, bx=obj.x, by=obj.y, L2=(bx-ax)**2+(by-ay)**2;
+      for(const en of e.enemigos){ if(en.muerto||en===obj) continue;
+        const u=((en.x-ax)*(bx-ax)+(en.y-ay)*(by-ay))/L2; if(u<0||u>1) continue;
+        const px=ax+u*(bx-ax), py=ay+u*(by-ay); if(Math.hypot(en.x-px,en.y-py)<=T.linea) herir(e,en,danio*.7); }
+    }
+  }
+  // tiros: viajan hacia el objetivo (los rebotes nuevos se suman después de recorrer la lista)
+  e.nuevos=[];
+  for(const s of e.tiros){
+    const obj=e.enemigos.find(en=>en.id===s.a);
+    if(!obj||obj.muerto||obj.llego){ s.listo=true; continue; }
+    // avanza en línea recta del punto de salida al objetivo (que se mueve), con un arco arriba
+    const L=Math.max(20, Math.hypot(obj.x-s.x0, obj.y-s.y0)); s.p=Math.min(1, s.p+s.vel*dt/L);
+    const ox=s.x, oy=s.y;
+    s.x=s.x0+(obj.x-s.x0)*s.p; s.y=s.y0+(obj.y-14-s.y0)*s.p - s.arco*4*s.p*(1-s.p);
+    s.ang=Math.atan2(s.y-oy, s.x-ox);
+    if(s.p>=1){ s.listo=true; impacto(e,s,obj); }
+  }
+  e.efectos=e.efectos.filter(f=>e.t-f.t<.7);
+  e.tiros=e.tiros.filter(s=>!s.listo).concat(e.nuevos); e.nuevos=[];
+  e.enemigos=e.enemigos.filter(en=>!en.muerto&&!en.llego);
+  if(e.piezas<=0){ e.fin="perdiste"; return; }
+  if(e.enOla && e.colaVacia && !e.enemigos.length){ e.enOla=false; e.aura+=REGLAS.bonoOla;
+    if(e.ola>=MAPAS[e.mapa].olas.length) e.fin="ganaste"; else aviso(e,"Ola "+e.ola+" lista. +"+REGLAS.bonoOla+" de aura"); }
+}
+function impacto(e, s, obj){
+  const t=e.torres.find(x=>x.id===s.de); const T=t?TORRES[t.clave]:null; if(!T) return;
+  const victimas = T.salpica ? e.enemigos.filter(en=>!en.muerto && dist([en.x,en.y],[obj.x,obj.y])<=T.salpica) : [obj];
+  e.efectos.push({x:obj.x, y:obj.y-14, tipo:T.salpica?"salpica":"golpe", r:T.salpica||18, t:e.t, n:Math.round(s.danio)});
+  for(const en of victimas){ herir(e,en,s.danio); if(T.efecto) aplicar(en,T.efecto); }
+  if(T.rebota && !s.rebote){ const otro=e.enemigos.filter(en=>!en.muerto&&en!==obj&&dist([en.x,en.y],[obj.x,obj.y])<=90)[0];
+    if(otro) e.nuevos.push({ id:e.ids++, de:s.de, tipo:T.proyectil, x:obj.x, y:obj.y-14, x0:obj.x, y0:obj.y-14, a:otro.id, danio:s.danio*T.rebota, vel:260, p:0, arco:0, rebote:true }); }
+}
+
+/* lo que mira el arnés */
+const MOTOR = { ORDEN_MAPAS, crearPartida, poner, puedePoner, mejorar, vender, usarPoder, iniciarOla, avanzar, mudar, costoMejora, rangoDe, torreEn };
+if(typeof module!=="undefined") module.exports = { MOTOR, TORRES, ENEMIGOS, MAPAS, CREW, REGLAS, setAzar:f=>{AZAR=f;} };
+
+const PIEL = "#E9B98F", PANT = "#2F3650", ZAP = "#F2F1ED";
+const hex = h => { const n=parseInt(h.slice(1),16); return [(n>>16)&255,(n>>8)&255,n&255]; };
+const mez = (a,b,t) => { const x=hex(a), y=hex(b); return "rgb("+[0,1,2].map(i=>Math.round(x[i]+(y[i]-x[i])*t)).join(",")+")"; };
+const osc = (h,k) => mez(h,"#0A0C14",k), cla = (h,k) => mez(h,"#FFFFFF",k);
+const lum = h => { const c=hex(h); return .299*c[0]+.587*c[1]+.114*c[2]; };
+
+/* un degradé por color: luz arriba-izquierda, sombra abajo-derecha */
+function grad(id, c){ return `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
+  <stop offset="0" stop-color="${cla(c,.22)}"/><stop offset=".55" stop-color="${c}"/><stop offset="1" stop-color="${osc(c,.32)}"/></linearGradient>`; }
+
+/* miembro: línea gruesa con contorno. pts = [[x,y],[x,y],[x,y]] hombro-codo-mano */
+function miembro(pts, w, col, outline){
+  const d = "M"+pts[0]+" L"+pts[1]+" L"+pts[2];
+  return `<path d="${d}" fill="none" stroke="${outline}" stroke-width="${w+3}" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+function brazo(sh, co, ma, shirt, piel, flip){
+  const manga = miembro([sh,co,co], 15, shirt, osc(shirt,.5));
+  const ante  = miembro([co,ma,ma], 12, piel, osc(piel,.45));
+  const mano  = `<circle cx="${ma[0]}" cy="${ma[1]}" r="7.5" fill="${piel}" stroke="${osc(piel,.45)}" stroke-width="1.6"/>
+                 <path d="M${ma[0]-4},${ma[1]+1} q4,4 8,0" stroke="${osc(piel,.35)}" stroke-width="1.2" fill="none"/>`;
+  return manga + ante + mano;
+}
+function pierna(ca, ro, to, pant, zap, dir){
+  const p = miembro([ca,ro,to], 17, pant, osc(pant,.5));
+  // zapatilla apuntando a `dir` (1 derecha, -1 izquierda, 0 de frente)
+  const x=to[0], y=to[1];
+  const z = dir===0
+    ? `<path d="M${x-10},${y-6} h20 a6,6 0 0 1 6,6 v4 a3,3 0 0 1 -3,3 h-26 a3,3 0 0 1 -3,-3 v-4 a6,6 0 0 1 6,-6 z"`
+    : `<path d="M${x-9*dir},${y-7} h${14*dir} q${12*dir},0 ${16*dir},7 v3 a3,3 0 0 1 ${-3*dir},3 h${-27*dir} a3,3 0 0 1 ${-3*dir},-3 v-6 a4,4 0 0 1 ${4*dir},-4 z"`;
+  return p + z + ` fill="${zap}" stroke="${osc(zap,.5)}" stroke-width="1.6"/>` +
+    `<path d="M${x-12},${y+3} h${dir===0?24:27*dir}" stroke="${osc(zap,.25)}" stroke-width="2.6" stroke-linecap="round"/>` +
+    `<path d="M${x-4},${y-5} l3,4 M${x+1},${y-5} l3,4" stroke="${osc(zap,.4)}" stroke-width="1.2"/>`;
+}
+
+/* ---------- la cabeza ---------- */
+function cabeza(k, c, g){
+  const piel = c.skin || PIEL, e = osc(piel,.45), hair = c.hair, he = osc(hair,.4);
+  const ex = g.expr || "sonrisa";
+  const ojo = (x, cerrado) => cerrado
+    ? `<path d="M${x-5},-4 q5,4 10,0" stroke="#1A1C22" stroke-width="2" fill="none" stroke-linecap="round"/>`
+    : `<ellipse cx="${x}" cy="-4" rx="5.2" ry="5.8" fill="#FFF"/><circle cx="${x+1}" cy="-3.5" r="3.1" fill="#2A3A5E"/>
+       <circle cx="${x+1}" cy="-3.5" r="1.6" fill="#101218"/><circle cx="${x+2.2}" cy="-5" r="1" fill="#FFF"/>`;
+  const cejas = {
+    sonrisa:`<path d="M-15,-14 q6,-4 11,-1 M4,-15 q6,-3 11,1"`,
+    pillo:  `<path d="M-15,-13 q6,-5 11,-2 M4,-17 q6,-2 11,2"`,
+    serio:  `<path d="M-15,-12 q6,-1 11,-2 M4,-14 q6,1 11,2"`,
+    concentrado:`<path d="M-15,-13 q6,-2 11,0 M4,-13 q6,-2 11,0"`,
+    grito:  `<path d="M-15,-16 q6,-6 11,-3 M4,-19 q6,-3 11,3"`,
+    paz:    `<path d="M-15,-13 q6,-3 11,-1 M4,-14 q6,-2 11,1"`,
+    dormido:`<path d="M-15,-11 q6,-1 11,0 M4,-11 q6,-1 11,0"`,
+  }[ex] + ` stroke="${he}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  const boca = {
+    sonrisa:`<path d="M-9,8 q9,10 18,0" fill="#5A2430" stroke="#3A1218" stroke-width="1.4"/><path d="M-6,8.5 q6,3 12,0" fill="#FFF"/>`,
+    pillo:  `<path d="M-7,9 q10,6 16,-2" fill="none" stroke="#3A1218" stroke-width="2" stroke-linecap="round"/>`,
+    serio:  `<path d="M-8,10 h16" fill="none" stroke="#3A1218" stroke-width="2.2" stroke-linecap="round"/>`,
+    concentrado:`<path d="M-6,10 q6,-3 12,0" fill="none" stroke="#3A1218" stroke-width="2" stroke-linecap="round"/>`,
+    grito:  `<ellipse cx="0" cy="11" rx="8" ry="7" fill="#5A2430" stroke="#3A1218" stroke-width="1.4"/><path d="M-6,7 h12" stroke="#FFF" stroke-width="2.4"/>`,
+    paz:    `<path d="M-8,9 q8,6 16,0" fill="none" stroke="#3A1218" stroke-width="2" stroke-linecap="round"/>`,
+    dormido:`<path d="M-5,10 q5,4 10,0" fill="none" stroke="#3A1218" stroke-width="2" stroke-linecap="round"/>`,
+  }[ex];
+  const ojos = ex==="dormido" ? ojo(-9,true)+ojo(9,true) : ex==="concentrado" ? ojo(-9,true)+ojo(9,false) : ojo(-9,false)+ojo(9,false);
+  const anteojos = g.anteojos ? `<g fill="none" stroke="#2A2F3A" stroke-width="2"><circle cx="-9" cy="-4" r="8" fill="${g.anteojos}" fill-opacity=".45"/><circle cx="9" cy="-4" r="8" fill="${g.anteojos}" fill-opacity=".45"/><path d="M-1,-4 h2 M-17,-5 l-6,-3 M17,-5 l6,-3"/></g>` : "";
+  const barba = c.beard ? `<path d="M-21,-2 C-21,16 -12,27 0,27 C12,27 21,16 21,-2 C19,10 12,15 0,15 C-12,15 -19,10 -21,-2 Z" fill="${hair}" stroke="${he}" stroke-width="1.2"/>
+       <path d="M-12,14 q4,4 8,2 M4,16 q4,2 8,-2" stroke="${cla(hair,.25)}" stroke-width="1.2" fill="none"/>` : "";
+  const orejas = `<ellipse cx="-23" cy="-1" rx="4.5" ry="6.5" fill="${piel}" stroke="${e}" stroke-width="1.4"/><ellipse cx="23" cy="-1" rx="4.5" ry="6.5" fill="${piel}" stroke="${e}" stroke-width="1.4"/>`;
+  const cara = `<path d="M-22,-14 C-22,-34 22,-34 22,-14 C22,4 18,16 10,22 C5,26 -5,26 -10,22 C-18,16 -22,4 -22,-14 Z" fill="url(#${k}-piel)" stroke="${e}" stroke-width="1.8"/>
+    <ellipse cx="-12" cy="4" rx="5" ry="3" fill="#E8766A" opacity=".35"/><ellipse cx="12" cy="4" rx="5" ry="3" fill="#E8766A" opacity=".35"/>
+    <path d="M-1,-2 q-4,6 1,7" stroke="${e}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+  return `<g transform="translate(${g.hx||0},${g.hy||-160}) rotate(${g.tilt||0})">${pelo(k,c,"atras")}${orejas}${cara}${barba}${ojos}${cejas}${boca}${anteojos}${pelo(k,c,"adelante")}${g.gorro||""}</g>`;
+}
+
+/* el pelo tiene parte de atrás (bajo la cara) y parte de adelante */
+function pelo(k, c, capa){
+  const h = c.hair, e = osc(h,.4), hi = cla(h,.3);
+  const rulo = (x,y,r) => `<circle cx="${x}" cy="${y}" r="${r}"/>`;
+  const S = `fill="url(#${k}-pelo)" stroke="${e}" stroke-width="1.6"`;
+  switch(c.style){
+    case "rulos":
+      if(capa==="atras") return `<g ${S}>${rulo(-20,-14,8)}${rulo(20,-14,8)}${rulo(-24,-2,6)}${rulo(24,-2,6)}</g>`;
+      return `<g ${S}>${rulo(-14,-26,9)}${rulo(0,-31,10)}${rulo(14,-26,9)}${rulo(-23,-18,7)}${rulo(23,-18,7)}${rulo(-7,-22,7)}${rulo(7,-22,7)}</g>
+        <g fill="${hi}" opacity=".6">${rulo(-3,-34,2.4)}${rulo(-16,-29,2)}${rulo(12,-29,2)}</g>`;
+    case "largorulos":
+      if(capa==="atras") return `<g ${S}>${rulo(-24,-12,10)}${rulo(24,-12,10)}${rulo(-28,4,9)}${rulo(28,4,9)}${rulo(-26,20,8)}${rulo(26,20,8)}${rulo(-20,30,7)}${rulo(20,30,7)}</g>`;
+      return `<g ${S}>${rulo(-14,-27,10)}${rulo(0,-32,11)}${rulo(14,-27,10)}${rulo(-24,-20,8)}${rulo(24,-20,8)}</g>
+        <g fill="${hi}" opacity=".6">${rulo(-3,-35,2.6)}${rulo(-17,-30,2)}${rulo(13,-30,2)}${rulo(-27,8,2)}</g>`;
+    case "largo":
+      if(capa==="atras") return `<path d="M-24,-20 C-26,10 -26,30 -22,44 L-14,44 L-14,0 L14,0 L14,44 L22,44 C26,30 26,10 24,-20 Z" ${S}/>`;
+      return `<path d="M-23,-14 C-23,-36 23,-36 23,-14 L24,-6 C22,-16 16,-22 8,-24 C2,-25 -6,-23 -12,-20 C-18,-17 -22,-12 -24,-6 Z" ${S}/>
+        <path d="M-8,-30 q10,-4 18,2" stroke="${hi}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+    case "medio":
+      if(capa==="atras") return `<path d="M-24,-16 C-26,0 -26,8 -24,14 L-18,14 L-18,-6 L18,-6 L18,14 L24,14 C26,8 26,0 24,-16 Z" ${S}/>`;
+      return `<path d="M-23,-14 C-23,-36 23,-36 23,-14 L23,-8 C20,-18 12,-23 4,-22 L-2,-16 L-6,-23 C-14,-22 -20,-16 -23,-8 Z" ${S}/>
+        <path d="M-10,-29 q8,-4 16,0" stroke="${hi}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+    default: // corto
+      if(capa==="atras") return "";
+      return `<path d="M-23,-12 C-24,-36 24,-36 23,-12 L22,-9 C20,-18 14,-22 8,-21 L4,-17 L-1,-22 L-6,-18 L-11,-22 C-17,-21 -21,-15 -22,-9 Z" ${S}/>
+        <path d="M-10,-28 q8,-4 16,-1" stroke="${hi}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  }
+}
+
+/* ---------- el cuerpo entero ---------- */
+function torso(k, c, g){
+  const s = c.shirt, e = osc(s,.5), tag = c.n.replace(/^El /,"").toUpperCase();
+  const ink = lum(s) > 140 ? "#1A1C22" : "#F2F1ED";
+  const t = (g.pose && g.pose.torso) || g.torso || {x:0,y:-130,rot:0};
+  return `<g transform="translate(${t.x},${t.y}) rotate(${t.rot||0})">
+    <path d="M-30,0 C-32,20 -30,40 -26,58 L26,58 C30,40 32,20 30,0 C20,-6 -20,-6 -30,0 Z" fill="url(#${k}-remera)" stroke="${e}" stroke-width="1.8"/>
+    <path d="M-12,-3 q12,10 24,0" fill="${osc(s,.3)}" stroke="${e}" stroke-width="1.2"/>
+    <path d="M-24,14 q-2,20 2,38" stroke="${osc(s,.18)}" stroke-width="2" fill="none" opacity=".7"/>
+    <text x="0" y="36" text-anchor="middle" font-family="Archivo Black,Archivo,sans-serif" font-size="11" fill="${ink}" opacity=".92">${tag}</text>
+    <rect x="-26" y="54" width="52" height="7" rx="2" fill="${osc(PANT,.2)}"/>
+  </g>`;
+}
+function cuello(k, c, g){
+  const piel = c.skin || PIEL;
+  return `<rect x="-8" y="${(g.hy||-160)+18}" width="16" height="16" fill="${osc(piel,.15)}" stroke="${osc(piel,.45)}" stroke-width="1.4"/>`;
+}
+
+const POSE_BASE = {
+  piernas:[ [[-11,-72],[-13,-38],[-14,-6],-1], [[11,-72],[13,-38],[14,-6],1] ],
+  brazos:[ [[-27,-124],[-36,-94],[-32,-66]], [[27,-124],[36,-94],[32,-66]] ],
+};
+
+function persona(k, c, g){
+  const piel = c.skin || PIEL;
+  const P = Object.assign({}, POSE_BASE, g.pose || {});
+  const piernas = P.piernas.map(p => pierna(p[0],p[1],p[2], PANT, ZAP, p[3])).join("");
+  const brazoI = brazo(...P.brazos[0], c.shirt, piel), brazoD = brazo(...P.brazos[1], c.shirt, piel);
+  return `${g.atras||""}${P.brazoIzqAtras ? brazoI : ""}${piernas}${cuello(k,c,g)}${torso(k,c,g)}${P.brazoIzqAtras ? "" : brazoI}${g.medio||""}${brazoD}${cabeza(k,c,g)}${g.adelante||""}`;
+}
+
+/* ---------- el fondo: una sala de museo distinta por tarjeta ---------- */
+function fondo(k, i){
+  const cuadros = [
+    `<rect x="12" y="14" width="56" height="44" fill="#1F2E5A"/><path d="M18,40 q14,-20 28,-4 t20,-8" stroke="#F2D06B" stroke-width="3" fill="none"/><circle cx="54" cy="24" r="5" fill="#F2D06B"/>`,
+    `<rect x="12" y="14" width="56" height="44" fill="#D9743A"/><path d="M30,54 q10,-30 8,-38 q6,16 10,38" fill="#3A2A2A"/><ellipse cx="38" cy="26" rx="6" ry="8" fill="#E8C9A8"/>`,
+    `<rect x="12" y="14" width="56" height="44" fill="#EDE6D6"/><rect x="18" y="20" width="16" height="16" fill="#D43B2F"/><rect x="40" y="20" width="22" height="10" fill="#2B4FA3"/><rect x="18" y="42" width="44" height="10" fill="#F2C23A"/>`,
+    `<rect x="12" y="14" width="56" height="44" fill="#5E8C5A"/><ellipse cx="40" cy="42" rx="22" ry="8" fill="#3B5E3A"/><circle cx="40" cy="30" r="9" fill="#F2F1ED"/>`,
+    `<rect x="12" y="14" width="56" height="44" fill="#3B2F4F"/><path d="M20,52 L40,20 L60,52 Z" fill="#9C7BD9"/><circle cx="52" cy="24" r="4" fill="#F2F1ED"/>`,
+  ][i % 5];
+  return `<g opacity=".85">
+    <g transform="translate(${i%2 ? 150 : 8},${12 + (i%3)*4})"><rect x="6" y="8" width="68" height="56" rx="2" fill="#8A6B31"/><rect x="9" y="11" width="62" height="50" fill="#D9A94F"/>${cuadros}</g>
+    <path d="M0,214 L240,214" stroke="#000" stroke-opacity=".25" stroke-width="2"/>
+    <g stroke="#6B1E2A" stroke-width="2" fill="none"><path d="M${i%2?2:150},196 q44,14 88,0"/></g>
+    <g fill="#B9A24F"><rect x="${i%2?0:148}" y="188" width="4" height="26"/><rect x="${i%2?88:236}" y="188" width="4" height="26"/></g>
+  </g>`;
+}
+
+/* ---------- cada uno: pose, cara y objeto ---------- */
+const GENTE = {
+  tomy: { expr:"sonrisa",
+    pose:{ brazos:[ [[-27,-124],[-44,-104],[-30,-92]], [[27,-124],[52,-112],[58,-134]] ] },
+    atras:`<g>
+      <path d="M-38,-128 h22 v52 a6,6 0 0 1 -6,6 h-10 a6,6 0 0 1 -6,-6 z" fill="#2E8B57" stroke="#1C5636" stroke-width="1.8"/>
+      <rect x="-38" y="-128" width="22" height="10" rx="3" fill="#1F6B42"/><rect x="-33" y="-134" width="12" height="7" rx="2" fill="#2E2E2E"/>
+      <path d="M-20,-120 q10,4 0,16" stroke="#1C5636" stroke-width="3" fill="none"/>
+      <path d="M-34,-112 v30" stroke="#8FD6AE" stroke-width="2" opacity=".6"/></g>`,
+    adelante:`<g>
+      <g transform="translate(58,-140)"><path d="M-9,-2 q0,16 9,16 q9,0 9,-16 z" fill="#7A4A26" stroke="#4A2B14" stroke-width="1.6"/><ellipse cx="0" cy="-2" rx="9" ry="3.5" fill="#4F8A3A"/>
+        <path d="M2,-3 l7,-26" stroke="#C9C9C9" stroke-width="2.4" stroke-linecap="round"/><path d="M9,-29 q6,-8 0,-14 M14,-24 q6,-8 0,-14" stroke="#CFE8D8" stroke-width="1.6" fill="none" opacity=".8"/></g>
+      <g transform="translate(92,-160) rotate(-20)"><path d="M-7,-2 q0,13 7,13 q7,0 7,-13 z" fill="#7A4A26"/><ellipse cx="0" cy="-2" rx="7" ry="2.8" fill="#4F8A3A"/><path d="M2,-3 l5,-18" stroke="#C9C9C9" stroke-width="2"/></g>
+      <path d="M72,-170 q10,-14 24,-10" stroke="#F2F1ED" stroke-width="1.6" fill="none" stroke-dasharray="3 4" opacity=".6"/></g>` },
+  lamber: { expr:"grito",
+    pose:{ brazos:[ [[-27,-124],[-50,-100],[-30,-100]], [[27,-124],[50,-100],[30,-100]] ] },
+    adelante:`<g>
+      <g transform="translate(0,-112)"><rect x="-16" y="-14" width="32" height="56" rx="5" fill="#1A1C22" stroke="#4A4F5C" stroke-width="1.6"/><rect x="-13" y="-10" width="26" height="46" rx="2" fill="#4FD1E8"/>
+        <rect x="-10" y="-4" width="20" height="5" rx="2" fill="#F2F1ED" opacity=".9"/><rect x="-10" y="4" width="20" height="5" rx="2" fill="#F2F1ED" opacity=".7"/><rect x="-10" y="12" width="20" height="5" rx="2" fill="#F2F1ED" opacity=".5"/><rect x="-10" y="20" width="20" height="5" rx="2" fill="#F2F1ED" opacity=".4"/>
+        <circle cx="12" cy="-12" r="7" fill="#E86B5E"/><text x="12" y="-9" text-anchor="middle" font-size="7" font-family="Archivo" font-weight="700" fill="#FFF">99</text></g>
+      <g font-family="Archivo" font-weight="700" font-size="8" fill="#1A1C22">
+        <g transform="translate(-92,-186)"><rect width="44" height="14" rx="7" fill="#FFD56B" stroke="#8A6B31"/><text x="22" y="10" text-anchor="middle">LA ABUELA</text></g>
+        <g transform="translate(52,-200)"><rect width="40" height="14" rx="7" fill="#FFD56B" stroke="#8A6B31"/><text x="20" y="10" text-anchor="middle">EL GRUPO</text></g>
+        <g transform="translate(-74,-212)"><rect width="34" height="14" rx="7" fill="#FFD56B" stroke="#8A6B31"/><text x="17" y="10" text-anchor="middle">LABURO</text></g>
+        <g transform="translate(60,-176)"><rect width="30" height="14" rx="7" fill="#FFD56B" stroke="#8A6B31"/><text x="15" y="10" text-anchor="middle">+312</text></g></g>
+      <g stroke="#4FD1E8" stroke-width="2" stroke-linecap="round" opacity=".7"><path d="M-24,-200 l-6,-6 M24,-200 l6,-6 M0,-206 v-8"/></g></g>` },
+  chupa: { expr:"pillo",
+    pose:{ brazos:[ [[-27,-124],[-30,-92],[-18,-70]], [[27,-124],[56,-116],[70,-140]] ] },
+    medio:`<g><path d="M-30,-76 h22 v26 a4,4 0 0 1 -4,4 h-14 a4,4 0 0 1 -4,-4 z" fill="${osc("#2F3650",.1)}" stroke="${osc("#2F3650",.5)}" stroke-width="1.6"/><path d="M8,-76 h22 v26 a4,4 0 0 1 -4,4 h-14 a4,4 0 0 1 -4,-4 z" fill="${osc("#2F3650",.1)}" stroke="${osc("#2F3650",.5)}" stroke-width="1.6"/>
+      <path d="M-26,-72 h14 M12,-72 h14" stroke="${osc("#2F3650",.5)}" stroke-width="1.4"/>
+      <path d="M-24,-78 l3,-6 l4,6" fill="#C9C9C9"/><path d="M14,-78 h12 l-2,-5 h-8 z" fill="#1A1C22"/></g>`,
+    adelante:`<g>
+      <g transform="translate(84,-158) rotate(30)"><rect x="-7" y="-16" width="14" height="32" rx="3" fill="#1A1C22" stroke="#555"/><g fill="#E86B5E"><circle cx="0" cy="-10" r="2"/></g><g fill="#888"><rect x="-4" y="-4" width="8" height="2"/><rect x="-4" y="0" width="8" height="2"/><rect x="-4" y="4" width="8" height="2"/></g></g>
+      <g transform="translate(104,-186)"><circle r="7" fill="#F2B33D" stroke="#8A6B31" stroke-width="1.4"/><text y="3" text-anchor="middle" font-size="8" font-family="Archivo Black" fill="#8A6B31">$</text></g>
+      <g transform="translate(110,-150) rotate(-30)"><circle r="4" fill="none" stroke="#C9C9C9" stroke-width="2.4"/><path d="M4,0 h16 v4 h-3 v-2 h-3 v2 h-3 v-2 h-7 z" fill="#C9C9C9"/></g>
+      <g transform="translate(68,-196)"><rect x="-6" y="-4" width="12" height="8" rx="2" fill="#2A8FBD"/><text y="2" text-anchor="middle" font-size="5" font-family="Archivo" font-weight="700" fill="#FFF">SUBE</text></g>
+      <path d="M76,-150 q20,-30 40,-30" stroke="#F2F1ED" stroke-width="1.4" fill="none" stroke-dasharray="3 4" opacity=".5"/></g>` },
+  kzk: { expr:"concentrado",
+    pose:{ piernas:[ [[-11,-72],[-16,-40],[-20,-8],-1], [[11,-72],[14,-40],[12,-8],1] ],
+           brazos:[ [[-27,-124],[-50,-110],[-56,-86]], [[27,-124],[54,-120],[68,-146]] ] },
+    atras:`<g transform="translate(-4,0)">
+      <path d="M-56,-86 l-4,80" stroke="#2B3140" stroke-width="5" stroke-linecap="round"/><path d="M-70,-86 h28" stroke="#2B3140" stroke-width="6" stroke-linecap="round"/><rect x="-72" y="-90" width="8" height="8" rx="2" fill="#E86B5E"/>
+      <rect x="-62" y="-8" width="92" height="7" rx="3" fill="#2B3140"/><circle cx="-58" cy="0" r="6.5" fill="#1A1C22" stroke="#666" stroke-width="2"/><circle cx="28" cy="0" r="6.5" fill="#1A1C22" stroke="#666" stroke-width="2"/>
+      <path d="M-56,-30 h-10 v-6 h6" fill="none" stroke="#9BD3B0" stroke-width="2" opacity=".6"/></g>`,
+    adelante:`<g>
+      <g transform="translate(70,-150) rotate(-35)"><rect x="-5" y="-30" width="10" height="26" rx="4" fill="#E86B5E" stroke="#8A2F26" stroke-width="1.4"/><rect x="-1.6" y="-4" width="3.2" height="26" fill="#D9D9D9" stroke="#777"/><path d="M-4,22 h8" stroke="#777" stroke-width="2"/></g>
+      <g fill="#B9B9B9" stroke="#555" stroke-width="1"><path d="M96,-176 l5,0 l-2.5,12 z"/><path d="M108,-160 l5,0 l-2.5,12 z"/><path d="M90,-150 l5,0 l-2.5,12 z"/></g>
+      <g transform="translate(-14,-72)"><rect x="-22" y="0" width="44" height="7" rx="2" fill="#6B4A2F"/><rect x="-10" y="-5" width="8" height="12" rx="1" fill="#8A6B31"/><rect x="4" y="-5" width="8" height="12" rx="1" fill="#8A6B31"/></g></g>` },
+  matxi: { expr:"serio", anteojos:"#1A1C22",
+    pose:{ piernas:[ [[-14,-72],[-20,-38],[-24,-6],-1], [[14,-72],[20,-38],[24,-6],1] ],
+           brazos:[ [[-27,-124],[-44,-100],[18,-96]], [[27,-124],[44,-100],[-18,-100]] ], brazoIzqAtras:true },
+    atras:`<g><rect x="-80" y="-236" width="160" height="34" rx="4" fill="#B9B9B9" stroke="#666" stroke-width="2"/><text x="0" y="-212" text-anchor="middle" font-family="Archivo Black" font-size="18" fill="#1A1C22">NO PASA</text>
+      <g stroke="#8A8A8A" stroke-width="2"><path d="M-80,-222 h160 M-80,-212 h160"/></g></g>`,
+    adelante:`<g fill="#E86B5E" opacity=".9"><path d="M-74,-120 c0,-6 8,-6 8,0 c0,-6 8,-6 8,0 c0,5 -8,10 -8,10 c0,0 -8,-5 -8,-10 z"/><path d="M60,-150 c0,-5 6,-5 6,0 c0,-5 6,-5 6,0 c0,4 -6,8 -6,8 c0,0 -6,-4 -6,-8 z"/><path d="M80,-110 c0,-4 5,-4 5,0 c0,-4 5,-4 5,0 c0,3 -5,6 -5,6 c0,0 -5,-3 -5,-6 z"/></g>` },
+  chuna: { expr:"grito",
+    pose:{ piernas:[ [[-8,-72],[-24,-46],[-22,-6],-1], [[14,-80],[46,-96],[84,-112],1] ],
+           brazos:[ [[-27,-124],[-52,-140],[-70,-120]], [[27,-124],[44,-100],[50,-80]] ],
+           torso:{x:0,y:-130,rot:-12} },
+    torso:{x:0,y:-130,rot:-12},
+    adelante:`<g stroke="#3FA6A0" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M-70,-40 h22 M-78,-28 h30 M-70,-16 h22"/></g>
+      <g transform="translate(96,-118) rotate(-25)"><path d="M-14,-9 h20 q12,0 16,9 v4 a3,3 0 0 1 -3,3 h-30 a3,3 0 0 1 -3,-3 v-8 a5,5 0 0 1 4,-5 z" fill="#F2F1ED" stroke="#4A5260" stroke-width="1.8"/><path d="M-16,7 h34" stroke="#3FA6A0" stroke-width="3"/><path d="M-6,-8 l3,5 M1,-8 l3,5 M8,-8 l3,5" stroke="#3FA6A0" stroke-width="1.6"/></g>
+      <g fill="#FFD56B"><path d="M112,-132 l4,-10 l2,10 l10,2 l-10,2 l-2,10 l-4,-10 l-10,-2 z"/></g>` },
+  hippie: { expr:"paz", anteojos:"#F2B33D",
+    pose:{ piernas:[ [[-10,-50],[-44,-32],[-6,-10],1], [[10,-50],[44,-32],[6,-10],-1] ],
+           brazos:[ [[-27,-100],[-48,-76],[-30,-52]], [[27,-100],[48,-76],[40,-56]] ], torso:{x:0,y:-106} },
+    hy:-136, gorro:`<path d="M-24,-16 q24,-6 48,0 v6 q-24,-6 -48,0 z" fill="#E86B5E" stroke="#8A2F26" stroke-width="1.2"/>`,
+    atras:`<g><circle cx="0" cy="-110" r="88" fill="#A98CF0" opacity=".10"/><circle cx="0" cy="-110" r="66" fill="#A98CF0" opacity=".10"/></g>`,
+    medio:`<g transform="translate(0,-90)"><circle r="7" fill="none" stroke="#F2B33D" stroke-width="2"/><path d="M0,-7 v14 M0,0 l-5,5 M0,0 l5,5" stroke="#F2B33D" stroke-width="2"/></g>`,
+    adelante:`<g><path d="M40,-56 l6,-40" stroke="#5A3A1E" stroke-width="3" stroke-linecap="round"/><circle cx="46" cy="-97" r="3" fill="#E86B5E"/>
+      <g fill="none" stroke="#A98CF0" stroke-width="3" stroke-linecap="round" opacity=".75"><path d="M46,-102 c10,-14 -12,-22 -2,-38 c8,-12 -6,-20 2,-32"/><path d="M58,-110 c8,-10 -6,-16 2,-28" opacity=".6"/><path d="M34,-114 c-8,-10 6,-16 -2,-28" opacity=".6"/></g>
+      <ellipse cx="0" cy="-4" rx="60" ry="9" fill="#C97A4A" opacity=".5"/></g>` },
+  marian: { expr:"concentrado",
+    pose:{ piernas:[ [[-12,-56],[-40,-40],[-30,-6],-1], [[12,-56],[22,-10],[44,-6],1] ],
+           brazos:[ [[-27,-108],[-10,-96],[16,-104]], [[27,-108],[44,-96],[36,-106]] ], torso:{x:0,y:-112} },
+    hy:-142, tilt:-6,
+    adelante:`<g transform="translate(28,-120)">
+      <rect x="-22" y="-14" width="40" height="30" rx="5" fill="#1A1C22" stroke="#4A4F5C" stroke-width="1.6"/><rect x="-16" y="-20" width="16" height="7" rx="2" fill="#1A1C22"/>
+      <rect x="18" y="-8" width="40" height="20" rx="3" fill="#2B2F3A" stroke="#4A4F5C" stroke-width="1.6"/><rect x="26" y="-10" width="6" height="24" fill="#D9A94F" opacity=".8"/><rect x="58" y="-10" width="8" height="24" rx="2" fill="#1A1C22" stroke="#4A4F5C"/>
+      <circle cx="68" cy="2" r="9" fill="#2A4A8A" stroke="#1A1C22" stroke-width="1.6"/><circle cx="68" cy="2" r="5" fill="#4FD1E8"/><circle cx="65" cy="-1" r="1.8" fill="#FFF"/>
+      <rect x="-6" y="-14" width="8" height="4" fill="#E86B5E"/></g>
+      <g fill="none" stroke="#FFD56B" stroke-width="2" opacity=".9"><circle cx="112" cy="-150" r="12"/><path d="M96,-150 h32 M112,-166 v32"/></g>
+      <path d="M100,-120 l6,-6 M110,-130 l6,-6" stroke="#FFF" stroke-width="2" opacity=".7"/>` },
+  damian: { expr:"dormido",
+    pose:{ brazos:[ [[-27,-124],[-36,-96],[-30,-70]], [[27,-124],[52,-112],[56,-90]] ] },
+    gorro:`<g><path d="M-24,-18 q24,-26 48,0 v6 h-48 z" fill="#3A6EA8" stroke="#1E3C5E" stroke-width="1.4"/><path d="M-26,-12 h58 l-4,8 h-50 z" fill="#1E3C5E"/></g>`,
+    atras:`<g><path d="M-120,-70 Q0,-250 120,-70 Z" fill="#F2B33D" opacity=".10"/><circle cx="-80" cy="-160" r="18" fill="#F2B33D" opacity=".5"/><text x="-80" y="-156" text-anchor="middle" font-family="Archivo Black" font-size="9" fill="#1A1C22" opacity=".8">6:00</text></g>`,
+    adelante:`<g>
+      <g transform="translate(56,-96) rotate(-12)"><rect x="-8" y="-6" width="30" height="12" rx="4" fill="#2B3140" stroke="#1A1C22" stroke-width="1.6"/><path d="M22,-9 h10 v18 h-10 z" fill="#4A5260" stroke="#1A1C22"/><rect x="32" y="-9" width="4" height="18" fill="#FFF2B8"/>
+        <path d="M36,-9 L118,-54 L118,36 L36,9 Z" fill="#FFD56B" opacity=".28"/><path d="M36,-7 L96,-36 L96,22 L36,7 Z" fill="#FFF2B8" opacity=".45"/></g>
+      <g fill="none" stroke="#FFD56B" stroke-width="1.8" stroke-linecap="round" opacity=".8"><path d="M-6,-196 l-3,-6 M6,-196 l3,-6 M0,-198 v-7"/></g>
+      <text x="-54" y="-188" font-family="Archivo Black" font-size="14" fill="#A98CF0" opacity=".6">z</text><text x="-66" y="-204" font-family="Archivo Black" font-size="18" fill="#A98CF0" opacity=".5">Z</text></g>` },
+  negro: { expr:"grito",
+    pose:{ piernas:[ [[-12,-72],[-28,-42],[-36,-6],-1], [[12,-72],[18,-38],[26,-6],1] ],
+           brazos:[ [[-27,-124],[-48,-112],[-44,-84]], [[27,-124],[48,-150],[80,-160]] ], torso:{x:0,y:-130,rot:-8} },
+    tilt:-8,
+    adelante:`<g>
+      <g transform="translate(-44,-92)"><path d="M-9,-10 h18 l-2,20 h-14 z" fill="#2B1A12" stroke="#120A06" stroke-width="1.4"/><path d="M-9,-10 h18 v4 h-18 z" fill="#D9A94F" opacity=".8"/><path d="M-8,-6 h16 l-1,8 h-14 z" fill="#1A0E08" opacity=".8"/></g>
+      <g transform="translate(84,-166) rotate(-60)"><rect x="-7" y="-26" width="14" height="40" rx="3" fill="#1C2A1E" stroke="#0E150F" stroke-width="1.6"/><rect x="-3.5" y="-40" width="7" height="16" rx="2" fill="#1C2A1E"/><rect x="-5" y="-16" width="10" height="16" rx="1" fill="#E8E2C6"/><text y="-5" text-anchor="middle" font-size="5" font-family="Archivo Black" fill="#1C2A1E">FERNET</text><text y="2" text-anchor="middle" font-size="4" font-family="Archivo" fill="#1C2A1E">del bueno</text>
+        <path d="M0,-42 q-8,-20 -20,-24" stroke="#5A3826" stroke-width="5" fill="none" stroke-linecap="round" opacity=".9"/></g>
+      <g fill="#5A3826" opacity=".85"><circle cx="40" cy="-200" r="5"/><circle cx="56" cy="-212" r="3.5"/><circle cx="28" cy="-186" r="2.5"/><circle cx="64" cy="-196" r="2"/></g>
+      <g fill="#FFF" opacity=".9"><circle cx="46" cy="-206" r="1.4"/><circle cx="34" cy="-194" r="1.2"/></g></g>` },
+};
+
+
+/* =====================================================================
+   LAS ARMAS NUEVAS (reemplazan lo que traía la maqueta)
+   ===================================================================== */
+GENTE.negro.adelante = `<g>
+  <g transform="translate(-44,-92) rotate(20)"><path d="M-3,-22 h6 v30 h-6 z M-9,8 h18 v6 h-18 z" fill="#9A9A9A" stroke="#555"/><path d="M-9,14 l3,10 h12 l3,-10 z" fill="#777"/></g>
+  <g transform="translate(84,-166) rotate(-30)"><rect x="-8" y="-26" width="16" height="52" rx="8" fill="#B5542E" stroke="#6E2F18" stroke-width="1.6"/><path d="M-5,-18 q5,4 10,0 M-5,-6 q5,4 10,0 M-5,6 q5,4 10,0 M-5,18 q5,4 10,0" stroke="#6E2F18" stroke-width="1.4" fill="none"/></g>
+  <g fill="none" stroke="#F2F1ED" stroke-width="1.6" opacity=".6"><path d="M70,-200 q6,-8 0,-16"/><path d="M80,-204 q6,-8 0,-16"/></g>
+  <g transform="translate(40,-30)"><path d="M-9,-8 h18 v16 a4,4 0 0 1 -4,4 h-10 a4,4 0 0 1 -4,-4 z" fill="#D9A94F" stroke="#8A6B31" stroke-width="1.4"/><rect x="-9" y="-12" width="18" height="5" rx="1" fill="#5A3A1E"/><text y="6" text-anchor="middle" font-size="5" font-family="Archivo Black" fill="#5A3A1E">MIEL</text></g></g>`;
+GENTE.chupa.adelante = `<g>
+  <g transform="translate(78,-150) rotate(-15)"><rect x="-22" y="-16" width="44" height="34" rx="2" fill="#C9A46B" stroke="#7A5A2E" stroke-width="1.6"/><path d="M-22,-16 h44 M0,-16 v34" stroke="#7A5A2E" stroke-width="1.6"/><path d="M-22,-6 h44" stroke="#B9B9B9" stroke-width="3" opacity=".8"/><text y="12" text-anchor="middle" font-size="6" font-family="Archivo Black" fill="#7A5A2E">FRÁGIL</text></g>
+  <g stroke="#F2F1ED" stroke-width="1.8" fill="none" opacity=".7" stroke-linecap="round"><path d="M-40,-150 q-4,-8 2,-14"/><path d="M-52,-140 q-4,-8 2,-14"/></g></g>`;
+GENTE.matxi.adelante = `<g>
+  <g transform="translate(60,-150) rotate(-20)"><rect x="-16" y="-10" width="32" height="20" rx="2" fill="#F2EBD8" stroke="#8A6B31" stroke-width="1.4"/><path d="M-16,-10 l16,12 l16,-12" fill="none" stroke="#8A6B31" stroke-width="1.4"/><rect x="8" y="-8" width="6" height="6" fill="#E86B5E"/></g>
+  <g transform="translate(96,-178) rotate(-35)"><rect x="-12" y="-8" width="24" height="16" rx="2" fill="#F2EBD8" stroke="#8A6B31" stroke-width="1.2"/><path d="M-12,-8 l12,9 l12,-9" fill="none" stroke="#8A6B31" stroke-width="1.2"/></g>
+  <g transform="translate(-40,-70)"><path d="M-14,-12 h28 v26 h-28 z" fill="#6B4A2F" stroke="#3A2616" stroke-width="1.6"/><path d="M-14,-12 q14,-10 28,0" fill="#8A6B31" stroke="#3A2616" stroke-width="1.6"/><rect x="-5" y="-2" width="10" height="4" fill="#D9A94F"/></g>
+  <g fill="#E86B5E" opacity=".9"><path d="M-74,-120 c0,-6 8,-6 8,0 c0,-6 8,-6 8,0 c0,5 -8,10 -8,10 c0,0 -8,-5 -8,-10 z"/></g></g>`;
+GENTE.damian.adelante = `<g>
+  <g transform="translate(60,-108) rotate(-18)"><rect x="-22" y="-12" width="44" height="26" rx="2" fill="#1A1C22" stroke="#4A4F5C" stroke-width="1.6"/><g transform="rotate(-22 -22 -12)"><rect x="-22" y="-20" width="44" height="8" fill="#1A1C22" stroke="#4A4F5C" stroke-width="1.4"/><path d="M-20,-20 l6,8 M-10,-20 l6,8 M0,-20 l6,8 M10,-20 l6,8" stroke="#F2F1ED" stroke-width="3"/></g>
+    <text y="4" text-anchor="middle" font-size="6" font-family="Archivo" font-weight="700" fill="#F2F1ED">QUINCHO · T1</text></g>
+  <text x="84" y="-150" font-family="Archivo Black" font-size="14" fill="#FFD56B">¡CORTE!</text>
+  <text x="-66" y="-204" font-family="Archivo Black" font-size="18" fill="#A98CF0" opacity=".5">Z</text></g>`;
+
+/* =====================================================================
+   LAS FISURAS: misma base de dibujo, pero despeinadas, con barba de tres
+   días y cada una con lo suyo. `c` pisa pelo, piel y remera.
+   ===================================================================== */
+const FISURAS = {
+  manguero:{ c:{hair:"#5A4A3A", style:"rulos", beard:true, skin:"#D9A47E"}, expr:"sonrisa",
+    pose:{ brazos:[ [[-27,-124],[-40,-98],[-30,-74]], [[27,-124],[52,-110],[70,-120]] ] },
+    adelante:`<g><g transform="translate(70,-120)"><path d="M-8,-10 h16 l-2,22 h-12 z" fill="#F2F1ED" stroke="#8B909C" stroke-width="1.4"/><circle cy="-14" r="5" fill="#F2B33D" stroke="#8A6B31"/></g>
+      <g transform="translate(-30,-150)"><rect x="-22" y="-10" width="44" height="18" rx="3" fill="#C9A46B" stroke="#7A5A2E"/><text y="4" text-anchor="middle" font-size="6" font-family="Archivo Black" fill="#3A2616">¿UNA MONEDA?</text></g></g>` },
+  trapito:{ c:{hair:"#1E1A18", style:"corto", beard:true, skin:"#C98A62"}, expr:"pillo",
+    gorro:`<path d="M-24,-18 q24,-26 48,0 v6 h-48 z" fill="#D8A33C" stroke="#8A6B31" stroke-width="1.4"/><path d="M-26,-12 h58 l-4,8 h-50 z" fill="#8A6B31"/>`,
+    pose:{ brazos:[ [[-27,-124],[-50,-104],[-56,-130]], [[27,-124],[48,-104],[60,-84]] ] },
+    adelante:`<g><path d="M-62,-132 q-16,14 -10,34 q-4,-20 10,-34 z M-62,-132 q8,20 2,36 l-8,-4 q6,-14 -2,-30 z" fill="#E86B5E" stroke="#8A2F26" stroke-width="1.4"/>
+      <g transform="translate(60,-84)"><rect x="-12" y="-6" width="24" height="12" rx="2" fill="#F2F1ED" stroke="#8B909C"/><text y="3" text-anchor="middle" font-size="6" font-family="Archivo Black" fill="#1A1C22">$500</text></g></g>` },
+  carrito:{ c:{hair:"#6B6B6B", style:"medio", beard:true, skin:"#C98A62"}, expr:"serio",
+    pose:{ brazos:[ [[-27,-124],[-44,-100],[-56,-78]], [[27,-124],[44,-100],[56,-78]] ] },
+    atras:`<g><rect x="-74" y="-90" width="64" height="72" rx="3" fill="#6B6B6B" stroke="#3A3A3A" stroke-width="2"/><rect x="-70" y="-122" width="56" height="36" rx="2" fill="#B9A24F" stroke="#7A6A2E"/><rect x="-64" y="-150" width="44" height="30" rx="2" fill="#8A6B31" stroke="#5A4A2E"/><rect x="-58" y="-170" width="30" height="22" rx="2" fill="#2E8B57" stroke="#1C5636"/>
+      <circle cx="-62" cy="-14" r="9" fill="#1A1C22" stroke="#666" stroke-width="2"/><circle cx="-22" cy="-14" r="9" fill="#1A1C22" stroke="#666" stroke-width="2"/><path d="M-74,-30 h64" stroke="#3A3A3A" stroke-width="3"/></g>` },
+  perro:{ perro:true },
+  medias:{ c:{hair:"#2A1D14", style:"corto", beard:false, skin:"#C98A62"}, expr:"grito",
+    pose:{ brazos:[ [[-27,-124],[-50,-130],[-60,-150]], [[27,-124],[50,-130],[60,-150]] ] },
+    adelante:`<g stroke="#1A1C22" stroke-width="1.2"><path d="M-70,-150 h8 v18 q0,6 -6,6 h-2 z" fill="#E86B5E"/><path d="M-60,-150 h8 v18 q0,6 -6,6 h-2 z" fill="#4FD1E8"/><path d="M52,-150 h8 v18 q0,6 -6,6 h-2 z" fill="#F2B33D"/><path d="M62,-150 h8 v18 q0,6 -6,6 h-2 z" fill="#57A06B"/>
+      <path d="M-64,-120 h8 v18 q0,6 -6,6 h-2 z" fill="#A98CF0"/><path d="M56,-120 h8 v18 q0,6 -6,6 h-2 z" fill="#F2F1ED"/></g>
+      <g transform="translate(0,-196)"><rect x="-30" y="-9" width="60" height="18" rx="3" fill="#F2F1ED" stroke="#8B909C"/><text y="4" text-anchor="middle" font-size="6.5" font-family="Archivo Black" fill="#1A1C22">3 PARES × $1000</text></g>` },
+  vecina:{ c:{hair:"#C9C0B0", style:"largorulos", beard:false, skin:"#E9B98F"}, expr:"grito",
+    gorro:`<g fill="none" stroke="#1A1C22" stroke-width="2"><circle cx="-9" cy="-4" r="7" fill="#A98CF0" fill-opacity=".3"/><circle cx="9" cy="-4" r="7" fill="#A98CF0" fill-opacity=".3"/><path d="M-2,-4 h4"/></g>`,
+    pose:{ brazos:[ [[-27,-124],[-48,-104],[-24,-104]], [[27,-124],[48,-104],[24,-104]] ] },
+    adelante:`<g font-family="Archivo" font-weight="700" font-size="8" fill="#1A1C22"><g transform="translate(36,-200)"><rect width="64" height="16" rx="8" fill="#F2F1ED" stroke="#8B909C"/><text x="32" y="11" text-anchor="middle">¿Y VOS QUÉ HACÉS?</text></g></g>` },
+  rey:{ c:{hair:"#5A5A5A", style:"largo", beard:true, skin:"#C98A62"}, expr:"serio", anteojos:"#1A1C22",
+    gorro:`<path d="M-24,-20 l6,-14 l8,10 l10,-16 l10,16 l8,-10 l6,14 z" fill="#D9A94F" stroke="#8A6B31" stroke-width="1.6"/>`,
+    pose:{ brazos:[ [[-27,-124],[-46,-100],[-30,-80]], [[27,-124],[46,-100],[30,-80]] ] },
+    atras:`<g transform="translate(0,-60)"><rect x="-60" y="-40" width="120" height="40" rx="4" fill="#C9603F" opacity=".25"/><text y="-14" text-anchor="middle" font-family="Archivo Black" font-size="12" fill="#F2F1ED" opacity=".6">KIOSCO 24HS</text></g>`,
+    adelante:`<g transform="translate(-36,-80)"><rect x="-7" y="-14" width="14" height="30" rx="3" fill="#1C2A1E" stroke="#0E150F"/><rect x="-5" y="-8" width="10" height="12" fill="#E8E2C6"/></g>` },
+};
+function dibujoPerro(col){
+  const e=osc(col,.45);
+  return `<g>
+    <ellipse cx="0" cy="-30" rx="40" ry="22" fill="${col}" stroke="${e}" stroke-width="2"/>
+    <circle cx="36" cy="-48" r="18" fill="${col}" stroke="${e}" stroke-width="2"/>
+    <ellipse cx="22" cy="-58" rx="7" ry="12" fill="${osc(col,.25)}" transform="rotate(-20 22 -58)"/>
+    <ellipse cx="50" cy="-44" rx="10" ry="7" fill="${cla(col,.25)}"/><circle cx="56" cy="-46" r="3.5" fill="#1A1C22"/>
+    <circle cx="40" cy="-52" r="2.6" fill="#1A1C22"/>
+    <path d="M44,-38 q6,8 12,0" stroke="#1A1C22" stroke-width="1.6" fill="none"/><path d="M50,-36 q0,6 -4,8" fill="#E86B5E"/>
+    <g stroke="${e}" stroke-width="2" fill="${col}"><rect x="-30" y="-14" width="12" height="16" rx="4"/><rect x="-10" y="-14" width="12" height="16" rx="4"/><rect x="10" y="-14" width="12" height="16" rx="4"/><rect x="26" y="-14" width="12" height="16" rx="4"/></g>
+    <path d="M-40,-36 q-16,-16 -8,-30" stroke="${col}" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="32" cy="-34" r="5" fill="#E86B5E" stroke="${e}"/>
+  </g>`;
+}
+function dibujoFisura(tipo){
+  const E=ENEMIGOS[tipo], F=FISURAS[E.look]||{};
+  if(F.perro) return dibujoPerro(E.shirt);
+  const c=Object.assign({ n:E.n.replace(/^(El de las|El del|El|La) /,"").split(" ")[0], hair:"#2A1D14", style:"medio", beard:true, tall:1, shirt:E.shirt }, F.c||{});
+  return persona("f-"+tipo, c, F);
+}
+
+/* =====================================================================
+   EL ESCENARIO de cada mapa: casas, árboles, sombrillas, pinos, edificios.
+   ===================================================================== */
+function casa(x,y,col,ancho=60){ return `<g transform="translate(${x},${y})"><rect x="0" y="0" width="${ancho}" height="34" fill="${col}" stroke="#0005" stroke-width="1.5"/><path d="M-5,0 L${ancho/2},-22 L${ancho+5},0 Z" fill="#8A2F26" stroke="#0005" stroke-width="1.5"/><rect x="8" y="10" width="12" height="12" fill="#FFF2B8" opacity=".8"/><rect x="${ancho-22}" y="12" width="12" height="22" fill="#5A3A1E"/></g>`; }
+function arbol(x,y,r=14,col="#2E6B45"){ return `<g transform="translate(${x},${y})"><rect x="-3" y="-4" width="6" height="14" fill="#5A3A1E"/><circle cy="-10" r="${r}" fill="${col}" stroke="#0004" stroke-width="1.5"/><circle cx="${-r*.5}" cy="${-r*.9}" r="${r*.7}" fill="${cla(col,.15)}"/></g>`; }
+function sombrilla(x,y,col){ return `<g transform="translate(${x},${y})"><rect x="-1.5" y="-30" width="3" height="40" fill="#F2F1ED"/><path d="M-26,-28 q26,-22 52,0 z" fill="${col}" stroke="#0004" stroke-width="1.5"/><path d="M-26,-28 q13,-6 26,0 q13,-6 26,0" stroke="#FFF" stroke-width="1.5" fill="none" opacity=".6"/><ellipse cy="12" rx="22" ry="7" fill="#C9603F" opacity=".5"/></g>`; }
+function pino(x,y,alto=36){ return `<g transform="translate(${x},${y})"><rect x="-3" y="-2" width="6" height="10" fill="#4A2F17"/><path d="M-16,0 L0,${-alto*.5} L16,0 Z M-13,${-alto*.35} L0,${-alto*.8} L13,${-alto*.35} Z M-10,${-alto*.65} L0,${-alto} L10,${-alto*.65} Z" fill="#2E5A3A" stroke="#0005" stroke-width="1.2"/><path d="M-8,${-alto*.6} L0,${-alto} L8,${-alto*.6} Z" fill="#F2F1ED" opacity=".8"/></g>`; }
+function edificio(x,y,w,h,col){ let v=""; for(let j=10;j<h-8;j+=14) for(let i=6;i<w-8;i+=12) v+=`<rect x="${i}" y="${j}" width="6" height="8" fill="${(i*j)%5?'#FFF2B8':'#2A2F3A'}" opacity=".85"/>`; return `<g transform="translate(${x},${y})"><rect width="${w}" height="${h}" fill="${col}" stroke="#0006" stroke-width="1.5"/>${v}</g>`; }
+const ESCENARIOS = {
+  barrio: ()=> casa(0,120,"#C9A46B")+casa(330,10,"#8A6BC4",55)+casa(100,330,"#57A06B",50)+casa(190,330,"#D8A33C",50)+arbol(360,470)+arbol(20,420)+arbol(240,140,12)+arbol(30,520,16)+arbol(360,220,12)
+    +`<g transform="translate(300,520)"><rect x="-14" y="-16" width="28" height="22" rx="2" fill="#6B6B6B" stroke="#333"/><path d="M-6,-16 q6,-14 12,0" stroke="#999" stroke-width="2" fill="none"/><path d="M-8,-30 q4,-6 0,-12 M0,-32 q4,-6 0,-12" stroke="#CCC" stroke-width="1.6" fill="none" opacity=".6"/></g>`,
+  playa: ()=> `<rect x="0" y="0" width="390" height="30" fill="#2A8FBD"/><path d="M0,30 q30,8 60,0 t60,0 t60,0 t60,0 t60,0 t60,0 t60,0 v-10 H0 z" fill="#4FD1E8" opacity=".6"/>`
+    +sombrilla(60,330,"#E86B5E")+sombrilla(300,230,"#F2B33D")+sombrilla(200,500,"#57A06B")+sombrilla(350,60,"#A98CF0")
+    +`<g transform="translate(20,200)"><ellipse rx="14" ry="6" fill="#C9603F"/><text y="-6" text-anchor="middle" font-size="9">🦀</text></g><text x="30" y="520" font-size="14">🐚</text><text x="340" y="420" font-size="14">⛱️</text>`,
+  montania: ()=> `<path d="M0,120 L80,20 L140,90 L195,-10 L260,80 L320,30 L390,110 L390,0 L0,0 Z" fill="#8A95A8" opacity=".5"/><path d="M60,45 L80,20 L100,45 Z M175,20 L195,-10 L215,20 Z M300,55 L320,30 L340,55 Z" fill="#F2F1ED" opacity=".9"/>`
+    +pino(30,200)+pino(360,120,30)+pino(340,470,40)+pino(60,480,32)+pino(200,230,28)+pino(30,330,26)+pino(360,400,28)
+    +`<g transform="translate(300,520)"><rect x="-22" y="-14" width="44" height="22" rx="4" fill="#E86B5E" stroke="#8A2F26" stroke-width="1.5"/><text y="4" text-anchor="middle" font-size="7" font-family="Archivo Black" fill="#FFF">MICRO</text><circle cx="-12" cy="10" r="4" fill="#1A1C22"/><circle cx="12" cy="10" r="4" fill="#1A1C22"/></g>`,
+  ciudad: ()=> edificio(0,330,50,80,"#5A6470")+edificio(330,10,60,70,"#6B4A2F")+edificio(230,300,70,60,"#4A5A7A")+edificio(120,430,50,70,"#8A6BC4")+edificio(330,430,60,50,"#3C4150")
+    +`<g transform="translate(90,180)"><rect x="-3" y="-30" width="6" height="40" fill="#555"/><rect x="-8" y="-44" width="16" height="16" rx="3" fill="#1A1C22"/><circle cy="-36" r="4" fill="#E86B5E"/></g>`
+    +`<g transform="translate(260,70)"><rect x="-26" y="-12" width="52" height="24" rx="3" fill="#F2B33D" stroke="#8A6B31"/><text y="4" text-anchor="middle" font-size="7" font-family="Archivo Black" fill="#1A1C22">TAXI</text></g>`
+    +`<text x="20" y="80" font-size="16">🚧</text><text x="345" y="300" font-size="16">🚏</text>`,
+  esquina: ()=> `<g transform="translate(290,40)"><rect x="-60" y="-30" width="120" height="60" rx="4" fill="#3A2A4A" stroke="#1A1020" stroke-width="2"/><rect x="-52" y="-22" width="104" height="22" rx="3" fill="#E86B5E"/><text y="-7" text-anchor="middle" font-family="Archivo Black" font-size="11" fill="#FFF">KIOSCO 24HS</text><rect x="-50" y="4" width="40" height="22" fill="#FFF2B8" opacity=".8"/><rect x="10" y="4" width="40" height="22" fill="#4FD1E8" opacity=".6"/></g>`
+    +`<g transform="translate(40,480)"><rect x="-3" y="-60" width="6" height="70" fill="#555"/><rect x="-10" y="-70" width="20" height="10" rx="3" fill="#F2B33D"/><path d="M-40,10 L0,-62 L40,10 Z" fill="#F2B33D" opacity=".12"/></g>`
+    +`<g transform="translate(200,500)"><rect x="-30" y="-10" width="60" height="20" rx="4" fill="#C9603F" opacity=".6"/><text y="4" text-anchor="middle" font-size="7" font-family="Archivo Black" fill="#FFF">AGUANTE</text></g>`
+    +`<text x="120" y="420" font-size="14">🍺</text><text x="340" y="520" font-size="14">🛒</text><text x="30" y="200" font-size="14">🎸</text>`,
+};
+
+/* =====================================================================
+   LA VISTA. Dibuja el estado en SVG y manda las acciones al motor.
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+let E = null, M = null, mapaActual = "quincho";
+let eligiendo = null, torreElegida = null, ultimoT = 0, corriendo = false;
+const ESC_TORRE = .30, ESC_FIS = .25;
+
+/* progreso: qué mapas están abiertos. Se guarda en el teléfono si se puede. */
+function progreso(){ try{ return JSON.parse(localStorage.getItem("defensa.progreso")||"{}"); }catch(_){ return {}; } }
+function guardarProgreso(p){ try{ localStorage.setItem("defensa.progreso", JSON.stringify(p)); }catch(_){} }
+function abierto(k){ const i=ORDEN_MAPAS.indexOf(k); return i===0 || !!progreso()[ORDEN_MAPAS[i-1]]; }
+
+function armarMapa(){
+  M = MAPAS[mapaActual];
+  const defs = Object.keys(CREW).map(k=>{ const c=CREW[k]; return grad(k+"-piel", c.skin||PIEL)+grad(k+"-remera", c.shirt)+grad(k+"-pelo", c.hair); }).join("")
+    + Object.keys(ENEMIGOS).map(k=>{ const F=FISURAS[ENEMIGOS[k].look]||{}, c=F.c||{}; return grad("f-"+k+"-piel", c.skin||PIEL)+grad("f-"+k+"-remera", ENEMIGOS[k].shirt)+grad("f-"+k+"-pelo", c.hair||"#2A1D14"); }).join("");
+  const camino = "M"+M.camino.map(p=>p.join(",")).join(" L");
+  const puestos = M.puestos.map((p,i)=>`<g class="puesto libre" data-i="${i}" transform="translate(${p[0]},${p[1]})"><circle class="marca" r="22"/><ellipse cy="2" rx="18" ry="5" fill="#000" opacity=".2"/></g>`).join("");
+  const pal = M.paleta, palC = M.paletaClara||pal;
+  $("mapa").innerHTML = `<svg viewBox="0 0 ${M.ancho} ${M.alto}" id="svg" role="img" aria-label="${esc(M.n)}">
+    <style>#svg{--pasto:${pal.pasto};--camino:${pal.camino};--camino2:${pal.camino2};--vereda2:${pal.vereda2}}
+      @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]) #svg{--pasto:${palC.pasto};--camino:${palC.camino};--camino2:${palC.camino2};--vereda2:${palC.vereda2}} }
+      :root[data-theme="light"] #svg{--pasto:${palC.pasto};--camino:${palC.camino};--camino2:${palC.camino2};--vereda2:${palC.vereda2}}</style>
+    <defs>${defs}
+      <pattern id="baldosa" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="none" stroke="#000" stroke-opacity=".08"/></pattern></defs>
+    <rect width="${M.ancho}" height="${M.alto}" fill="var(--pasto)"/>
+    <g opacity=".5">${Array.from({length:14},(_,i)=>`<circle cx="${(i*73)%M.ancho}" cy="${(i*131)%M.alto}" r="${8+(i%4)*3}" fill="var(--vereda2)"/>`).join("")}</g>
+    <g class="escenario">${(ESCENARIOS[M.deco]||ESCENARIOS.barrio)()}</g>
+    <path d="${camino}" stroke="#000" stroke-opacity=".25" stroke-width="46" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${camino}" stroke="var(--camino2)" stroke-width="40" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${camino}" stroke="var(--camino)" stroke-width="32" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${camino}" stroke="url(#baldosa)" stroke-width="32" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${camino}" stroke="var(--vereda2)" stroke-width="2" fill="none" stroke-dasharray="6 10" stroke-linejoin="round" stroke-linecap="round" opacity=".7"/>
+    <g transform="translate(${M.camino[0][0]<0?70:M.camino[0][0]+62},${M.camino[0][1]<0?18:M.camino[0][1]-34})"><rect x="-34" y="-14" width="68" height="20" rx="4" fill="var(--panel)" stroke="var(--line)"/><text y="1" text-anchor="middle" class="aviso" style="font-size:10px">POR ACÁ VIENEN</text></g>
+    <g transform="translate(195,540)"><rect x="-70" y="-10" width="140" height="40" rx="6" fill="#6B4A2F" stroke="#3A2616" stroke-width="2"/><path d="M-78,-10 L0,-40 L78,-10 Z" fill="#8A2F26" stroke="#3A2616" stroke-width="2"/><rect x="-62" y="-4" width="20" height="30" fill="#3A2616"/><text x="10" y="14" text-anchor="middle" font-family="Archivo Black" font-size="12" fill="#F2F1ED">EL QUINCHO</text><g id="vitrina"></g>
+      <g class="humo" opacity=".5"><path d="M50,-40 q6,-10 0,-18 q-6,-8 2,-16" stroke="#CCC" stroke-width="3" fill="none" stroke-linecap="round"/></g></g>
+    <g id="puestos">${puestos}</g>
+    <g id="nubes"></g><g id="torres"></g><g id="fisuras"></g><g id="tiros"></g><g id="efectos"></g><g id="avisos"></g>
+  </svg>`;
+  $("svg").addEventListener("click", alTocarMapa);
+}
+function alTocarMapa(ev){
+  const p = ev.target.closest(".puesto"), t = ev.target.closest(".torre");
+  if(t){ torreElegida = +t.dataset.id; eligiendo=null; pintarPanel(); pintar(); return; }
+  if(p){ const i=+p.dataset.i;
+    if(E.mudando){ const tor=E.torres.find(x=>x.id===E.mudando); if(tor && !mudar(E,tor,i)){ torreElegida=null; } }
+    else if(eligiendo){ const por=poner(E,eligiendo,i); if(!por){ eligiendo=null; late("dAura"); } else sacudir(por); }
+    else { torreElegida=null; }
+    pintarPanel(); pintar(); }
+}
+function sacudir(por){ const msg={ocupado:"Ahí ya hay alguien", aura:"No te alcanza la aura", "ya está":"Ya está puesto", laburando:"Todavía está laburando"}[por]; if(msg) aviso(E,msg); }
+function late(id){ const el=$(id); el.classList.remove("late"); void el.offsetWidth; el.classList.add("late"); }
+
+/* dibujos cacheados: el SVG de cada amigo y de cada fisura se arma una vez */
+const CACHE = {};
+function svgTorre(k){ return CACHE["t"+k] ??= persona(k, CREW[k], GENTE[k]||{}); }
+function svgFisura(tipo){ return CACHE["f"+tipo] ??= dibujoFisura(tipo); }
+/* los tiros: grandes, para que se vean */
+const PROYECTIL = {
+  mate:`<g transform="scale(1.7)"><path d="M-5,-2 q0,8 5,8 q5,0 5,-8 z" fill="#7A4A26" stroke="#4A2B14"/><ellipse rx="5" ry="2" fill="#4F8A3A"/><path d="M1,-2 l3,-9" stroke="#C9C9C9" stroke-width="1.5"/><path d="M4,-12 q3,-4 0,-7" stroke="#CFE8D8" stroke-width="1.2" fill="none" opacity=".8"/></g>`,
+  notif:`<g transform="scale(1.4)"><rect x="-14" y="-7" width="28" height="14" rx="7" fill="#FFD56B" stroke="#8A6B31" stroke-width="1.5"/><circle cx="-7" r="3" fill="#E86B5E"/><rect x="-1" y="-2" width="10" height="4" rx="2" fill="#8A6B31" opacity=".6"/></g>`,
+  masaje:`<g transform="scale(1.6)"><circle r="7" fill="#F2F1ED" stroke="#8B909C" stroke-width="1.5"/><text y="3.5" text-anchor="middle" font-size="9">✋</text></g>`,
+  tornillo:`<g transform="scale(1.8)"><path d="M-2.5,-8 h5 v10 l-2.5,5 l-2.5,-5 z" fill="#B9B9B9" stroke="#555"/><path d="M-2,-5 h4 M-2,-2 h4 M-2,1 h4" stroke="#555" stroke-width=".8"/></g>`,
+  sobre:`<g transform="scale(1.6)"><rect x="-9" y="-6" width="18" height="12" fill="#F2EBD8" stroke="#8A6B31" stroke-width="1.2"/><path d="M-9,-6 l9,7 l9,-7" fill="none" stroke="#8A6B31" stroke-width="1.2"/><rect x="4" y="-4" width="3" height="3" fill="#E86B5E"/></g>`,
+  audio:`<g transform="scale(1.5)"><rect x="-16" y="-6" width="32" height="12" rx="6" fill="#57A06B" stroke="#2E5A3A" stroke-width="1.2"/><path d="M-10,0 h2 M-6,-2 v4 M-2,-3.5 v7 M2,-2 v4 M6,-3 v6 M10,0 h2" stroke="#F2F1ED" stroke-width="1.6"/></g>`,
+  reel:`<g transform="scale(1.6)"><rect x="-6" y="-10" width="12" height="20" rx="2.5" fill="#1A1C22" stroke="#4FD1E8" stroke-width="1.4"/><path d="M-2,-3 l5,3 l-5,3 z" fill="#4FD1E8"/><path d="M-9,-9 l-3,-3 M9,-9 l3,-3" stroke="#4FD1E8" stroke-width="1.5"/></g>`,
+  claqueta:`<g transform="scale(1.6)"><rect x="-9" y="-4" width="18" height="10" rx="1" fill="#1A1C22" stroke="#4A4F5C"/><rect x="-9" y="-9" width="18" height="5" fill="#F2F1ED"/><path d="M-7,-9 l2,5 M-2,-9 l2,5 M3,-9 l2,5" stroke="#1A1C22" stroke-width="1.2"/></g>`,
+  chori:`<g transform="scale(1.8)"><rect x="-10" y="-4.5" width="20" height="9" rx="4.5" fill="#B5542E" stroke="#6E2F18" stroke-width="1.2"/><path d="M-5,-3 q2,3 0,6 M1,-3 q2,3 0,6" stroke="#6E2F18" stroke-width="1" fill="none"/><path d="M-2,-9 q3,-4 0,-7" stroke="#F2F1ED" stroke-width="1.2" fill="none" opacity=".7"/></g>`,
+};
+const GIRA = { tornillo:1, sobre:1, chori:1, claqueta:1 };
+
+function pintar(){
+  const svg=$("svg"); if(!svg||!E) return;
+  svg.classList.toggle("eligiendo", !!eligiendo || !!E.mudando);
+  for(const g of svg.querySelectorAll(".puesto")) g.classList.toggle("libre", !torreEn(E,+g.dataset.i));
+  // la nube del hippie
+  $("nubes").innerHTML = E.torres.filter(t=>TORRES[t.clave].nube).map(t=>`<g transform="translate(${t.x},${t.y})" class="nube"><circle r="${rangoDe(t)}" fill="#A98CF0" opacity=".10"/><circle r="${rangoDe(t)*.7}" fill="#A98CF0" opacity=".08"/><circle cx="${-rangoDe(t)*.4}" cy="${-rangoDe(t)*.3}" r="${rangoDe(t)*.35}" fill="#A98CF0" opacity=".08"/></g>`).join("");
+  // torres
+  const gT=$("torres"), vivos=new Set();
+  for(const t of E.torres){ vivos.add("t"+t.id);
+    let g=gT.querySelector(`[data-id="${t.id}"]`);
+    if(!g){ g=document.createElementNS("http://www.w3.org/2000/svg","g"); g.setAttribute("class","torre"); g.dataset.id=t.id;
+      g.innerHTML=`<circle class="aro"/><ellipse cy="4" rx="20" ry="6" fill="#000" opacity=".3"/><g class="cuerpo" style="--esc:${ESC_TORRE*CREW[t.clave].tall}" transform="scale(${ESC_TORRE*CREW[t.clave].tall})">${svgTorre(t.clave)}</g><g class="nivel"></g>`; gT.appendChild(g); }
+    g.setAttribute("transform",`translate(${t.x},${t.y+8})`);
+    g.querySelector(".aro").setAttribute("r", rangoDe(t));
+    g.classList.toggle("elegida", torreElegida===t.id); g.classList.toggle("molesta", t.molesta>0);
+    g.querySelector(".nivel").innerHTML = Array.from({length:t.nivel-1},(_,i)=>`<path transform="translate(${-6+i*10},-70) scale(.55)" d="M0,-9 l2.6,5.6 6.2,.9 -4.5,4.3 1.1,6.1 -5.4,-2.9 -5.4,2.9 1.1,-6.1 -4.5,-4.3 6.2,-.9 z" fill="var(--brass)"/>`).join("");
+  }
+  for(const g of [...gT.children]) if(!vivos.has("t"+g.dataset.id)) g.remove();
+  // fisuras
+  const gF=$("fisuras"), vivosF=new Set();
+  for(const en of E.enemigos){ vivosF.add(en.id);
+    let g=gF.querySelector(`[data-id="${en.id}"]`); const Ef=ENEMIGOS[en.tipo], esc=ESC_FIS*(Ef.grande||1), alto=48*esc/ESC_FIS;
+    if(!g){ g=document.createElementNS("http://www.w3.org/2000/svg","g"); g.setAttribute("class","enemigo"); g.dataset.id=en.id;
+      g.innerHTML=`<g class="voltea"><ellipse cy="3" rx="${14*esc/ESC_FIS}" ry="4" fill="#000" opacity=".3"/><g class="cuerpo andando" style="--esc:${esc}" transform="scale(${esc})">${svgFisura(en.tipo)}</g></g><rect class="vidaFondo" x="-14" y="${-alto}" width="28" height="4" rx="2"/><rect class="vida" x="-14" y="${-alto}" width="28" height="4" rx="2"/><rect class="escudo" x="-14" y="${-alto-5}" width="0" height="3" rx="1.5"/><text class="estado" y="${-alto-8}" text-anchor="middle" font-size="12"></text>`;
+      gF.appendChild(g); }
+    // solo el perro se da vuelta según adónde va: a la gente, si la damos vuelta, se le da vuelta el cartel
+    const mira = Ef.look==="perro" ? (en.reversa>0 ? -1 : 1) * (en.dir||1) : 1;
+    g.setAttribute("transform",`translate(${en.x},${en.y+6})`);
+    g.querySelector(".voltea").setAttribute("transform",`scale(${mira},1)`);
+    g.querySelector(".vida").setAttribute("width", 28*Math.max(0,en.vida)/en.vidaMax);
+    g.querySelector(".escudo").setAttribute("width", Ef.escudo? 28*en.escudo/Ef.escudo : 0);
+    g.classList.toggle("golpe", en.golpe>0);
+    const parado = en.quieto>0||en.dormido>0;
+    g.querySelector(".cuerpo").classList.toggle("andando", !parado);
+    g.querySelector(".estado").textContent = en.dormido>0?"💤":en.quieto>0?"🧉":en.reversa>0?"😍":(en.lentoT>0||en.lento<1)?"🐌":"";
+  }
+  for(const g of [...gF.children]) if(!vivosF.has(+g.dataset.id)) g.remove();
+  // tiros: giran según adónde van
+  $("tiros").innerHTML = E.tiros.map(s=>`<g transform="translate(${s.x},${s.y}) rotate(${GIRA[s.tipo]?(s.ang||0)*57.3+ (s.p*720):0})">${PROYECTIL[s.tipo]||""}</g>`).join("");
+  // impactos: un círculo que crece y el número de daño que flota
+  $("efectos").innerHTML = E.efectos.map(f=>{ const k=(E.t-f.t)/.7; return `<g transform="translate(${f.x},${f.y})"><circle r="${f.r*(.3+.7*k)}" fill="${f.tipo==="salpica"?"#F2B33D":"#F2F1ED"}" opacity="${.45*(1-k)}" stroke="#FFF" stroke-opacity="${.6*(1-k)}" stroke-width="2"/><text y="${-10-26*k}" text-anchor="middle" class="danio" opacity="${1-k}">${f.n}</text></g>`; }).join("");
+  const rec=E.avisos.filter(a=>E.t-a.t<3.2).slice(-3);
+  $("avisos").innerHTML = rec.map((a,i)=>`<text class="aviso" x="${M.ancho/2}" y="${M.alto-96-i*16}" text-anchor="middle" opacity="${Math.min(1,(3.2-(E.t-a.t))/.8)}">${esc(a.txt)}</text>`).join("");
+  $("vitrina").innerHTML = Array.from({length:M.piezas},(_,i)=>`<rect x="${-36+i*9.5}" y="-4" width="7" height="11" rx="1.5" fill="${i<E.piezas?'var(--brass)':'#0006'}"/>`).join("");
+  $("dPiezas").lastElementChild.textContent = E.piezas;
+  $("dAura").lastElementChild.textContent = Math.floor(E.aura);
+  $("dOla").lastElementChild.textContent = "Ola "+E.ola+"/"+M.olas.length;
+}
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function pintarPanel(){
+  const t = torreElegida!=null ? E.torres.find(x=>x.id===torreElegida) : null;
+  if(!t) torreElegida=null;
+  let html;
+  if(t){ const T=TORRES[t.clave], c=CREW[t.clave], cm=costoMejora(t);
+    html = `<div class="ficha"><svg viewBox="-70 -210 140 220"><g>${svgTorre(t.clave)}</g></svg>
+      <div><b>${c.n}</b> · ${T.rol} · nivel ${t.nivel}<p>${esc(T.tira)}</p><p><span style="color:var(--aura);font-weight:700">${T.poder.n}:</span> ${esc(T.poder.pie)}</p></div>
+      <button class="cerrar" type="button" data-acc="cerrar" aria-label="Cerrar">✕</button></div>
+      <div class="acciones">
+        <button class="poder" type="button" data-acc="poder" ${E.aura<T.poder.cuesta?"disabled":""}>${T.poder.n} <small>${T.poder.cuesta}</small></button>
+        <button type="button" data-acc="mejorar" ${t.nivel>=MEJORA.niveles||E.aura<cm?"disabled":""}>${t.nivel>=MEJORA.niveles?"Al tope":"Mejorar"} <small>${t.nivel>=MEJORA.niveles?"":cm}</small></button>
+        <button class="vender" type="button" data-acc="vender">Se va <small>+${Math.round(T.costo*.6)}</small></button>
+      </div>` + (E.mudando===t.id?`<div class="ayuda">Tocá el lugar adonde se muda.</div>`:"");
+  } else {
+    html = `<div class="fila">` + Object.keys(CREW).map(k=>{ const T=TORRES[k], c=CREW[k];
+      const puesto=E.torres.some(x=>x.clave===k), caro=E.aura<T.costo, lab=T.desde && E.ola+1<T.desde;
+      return `<button class="amigo ${eligiendo===k?"elegido":""} ${puesto?"puesto":""} ${caro&&!puesto?"caro":""} ${lab?"laburando":""}" type="button" data-k="${k}">
+        <span class="tag">${puesto?"en la vereda":lab?"laburando":T.rol}</span>
+        <svg viewBox="-70 -215 140 225"><g>${svgTorre(k)}</g></svg><b>${c.n}</b><small>${T.costo}</small></button>`; }).join("") + `</div>
+      <div class="acciones"><button class="ola" type="button" data-acc="ola" ${E.enOla||E.fin?"disabled":""}>${E.ola===0?"Que vengan":E.enOla?"Vienen…":"Que venga la ola "+(E.ola+1)}</button><button type="button" data-acc="mapas" class="salir">Mapas</button></div>
+      <div class="ayuda">${eligiendo?"Ahora tocá un lugar libre de la vereda.":"Tocá a un amigo y después un lugar de la vereda. Tocá a uno puesto para ver su poder."}</div>`;
+  }
+  for(const id of ["panelAbajo","panelLado"]) $(id).innerHTML = html;
+}
+document.addEventListener("click", ev=>{
+  const b=ev.target.closest("button"); if(!b) return;
+  if(b.dataset.mapa){ if(abierto(b.dataset.mapa)) empezar(b.dataset.mapa); return; }
+  if(b.id==="volverMapas"){ mostrarMapas(); return; }
+  if(!E) return;
+  if(b.dataset.k){ eligiendo = eligiendo===b.dataset.k?null:b.dataset.k; torreElegida=null; pintarPanel(); pintar(); return; }
+  const t = torreElegida!=null ? E.torres.find(x=>x.id===torreElegida) : null;
+  switch(b.dataset.acc){
+    case "ola": if(iniciarOla(E)) late("dOla"); break;
+    case "cerrar": torreElegida=null; break;
+    case "poder": if(t){ const por=usarPoder(E,t); if(por) sacudir(por); else late("dAura"); } break;
+    case "mejorar": if(t){ const por=mejorar(E,t); if(por) sacudir(por); } break;
+    case "vender": if(t){ vender(E,t); torreElegida=null; } break;
+    case "mapas": corriendo=false; mostrarMapas(); return;
+  }
+  pintarPanel(); pintar();
+});
+$("tema").addEventListener("click", ()=>{ const r=document.documentElement, actual=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"); r.dataset.theme=actual==="dark"?"light":"dark"; });
+
+function mostrarMapas(){
+  const p=progreso();
+  $("tapa").querySelector(".caja").innerHTML = `<h1>Los Museos: la defensa del quincho</h1>
+    <p>Las piezas están en el quincho. Las fisuras del barrio vienen por la vereda a llevárselas, de a una. Tocá a un amigo, tocá un lugar, y que no entren.</p>
+    <div class="mapas">` + ORDEN_MAPAS.map((k,i)=>{ const m=MAPAS[k], ok=abierto(k);
+      return `<button type="button" class="mapaBtn ${ok?"":"cerrado"} ${p[k]?"ganado":""}" data-mapa="${k}" ${ok?"":"disabled"}><b>${i+1}. ${esc(m.n)}</b><small>${ok?esc(m.sub):"Ganá el anterior para abrirlo"}</small>${p[k]?`<i>ganado · ${p[k]} piezas</i>`:""}</button>`; }).join("") + `</div>`;
+  $("tapa").hidden=false;
+}
+function empezar(k){
+  mapaActual=k; E=crearPartida(k); armarMapa(); torreElegida=null; eligiendo=null; $("tapa").hidden=true; pintarPanel(); pintar(); corriendo=true;
+}
+function paso(ts){
+  const dt=Math.min(.05, (ts-ultimoT)/1000||0); ultimoT=ts;
+  if(corriendo && E && !E.fin){ avanzar(E, dt); pintar();
+    if(Math.floor(E.t*2)!==Math.floor((E.t-dt)*2)) pintarPanel();
+    if(E.fin) terminar(); }
+  requestAnimationFrame(paso);
+}
+function terminar(){
+  corriendo=false; pintar();
+  const gano=E.fin==="ganaste";
+  if(gano){ const p=progreso(); p[mapaActual]=Math.max(p[mapaActual]||0, E.piezas); guardarProgreso(p); }
+  const sig = ORDEN_MAPAS[ORDEN_MAPAS.indexOf(mapaActual)+1];
+  $("tapa").querySelector(".caja").innerHTML = `<h1>${gano?"No entró nadie":"Se llevaron todo"}</h1>
+    <p>${gano?"Las "+E.piezas+" piezas siguen en el quincho. Maxi sube la foto al álbum de los museo.":"Las fisuras se llevaron las 10 piezas. El barrio es de ellos."}</p>
+    <p>${esc(M.n)} · ola ${E.ola} de ${M.olas.length} · ${E.matados} fisuras que no pasaron.</p>
+    ${gano&&sig?`<button class="ola" type="button" data-mapa="${sig}">Siguiente: ${esc(MAPAS[sig].n)}</button>`:""}
+    <button class="ola" type="button" data-mapa="${mapaActual}">${gano?"Otra vez":"Revancha"}</button>
+    <button type="button" class="salir" id="volverMapas">Elegir mapa</button>`;
+  $("tapa").hidden=false;
+}
+mostrarMapas(); requestAnimationFrame(paso);
+window.JUEGO = { get E(){return E;}, MOTOR, TORRES, ENEMIGOS, MAPAS, empezar };
+</script>
+</body>
+</html>
